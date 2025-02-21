@@ -1,17 +1,18 @@
 import type { AppRouteHandler } from "@/lib/types";
 import type { LoginRoute, RegisterRoute } from "./auth.routes";
 import { HTTPStatusCodes } from "@/lib/helpers";
-import db from "@/db";
+import { createDb } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { compare, genSaltSync, hash } from "bcryptjs";
 import { sign } from "hono/jwt";
-import env from "@/env";
 
 export const register: AppRouteHandler<RegisterRoute> = async ({
   json,
   req,
+  env,
 }) => {
+  const { db } = createDb(env);
   const body = req.valid("json");
   const userExists = await db.query.users.findFirst({
     where: eq(users.email, body.email),
@@ -38,7 +39,12 @@ export const register: AppRouteHandler<RegisterRoute> = async ({
   return json({ user, token }, HTTPStatusCodes.CREATED);
 };
 
-export const login: AppRouteHandler<LoginRoute> = async ({ json, req }) => {
+export const login: AppRouteHandler<LoginRoute> = async ({
+  json,
+  req,
+  env,
+}) => {
+  const { db } = createDb(env);
   const body = req.valid("json");
   const userExists = await db.query.users.findFirst({
     where: eq(users.email, body.email),

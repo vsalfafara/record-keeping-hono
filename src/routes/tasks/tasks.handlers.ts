@@ -7,16 +7,25 @@ import type {
 } from "./tasks.routes";
 import type { AppRouteHandler } from "@/lib/types";
 import { HTTPStatusCodes } from "@/lib/helpers";
-import db from "@/db";
+import { createDb } from "@/db";
 import { tasks } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-export const listTasks: AppRouteHandler<ListTaskRoute> = async ({ json }) => {
+export const listTasks: AppRouteHandler<ListTaskRoute> = async ({
+  json,
+  env,
+}) => {
+  const { db } = createDb(env);
   const tasks = await db.query.tasks.findMany();
   return json(tasks, HTTPStatusCodes.OK);
 };
 
-export const getTask: AppRouteHandler<GetTaskRoute> = async ({ json, req }) => {
+export const getTask: AppRouteHandler<GetTaskRoute> = async ({
+  json,
+  req,
+  env,
+}) => {
+  const { db } = createDb(env);
   const { id } = req.valid("param");
   const task = await db.query.tasks.findFirst({ where: eq(tasks.id, id) });
   if (!task) {
@@ -28,7 +37,9 @@ export const getTask: AppRouteHandler<GetTaskRoute> = async ({ json, req }) => {
 export const createTask: AppRouteHandler<CreateTaskRoute> = async ({
   json,
   req,
+  env,
 }) => {
+  const { db } = createDb(env);
   const newTask = req.valid("json");
   const [task] = await db.insert(tasks).values(newTask).returning();
   return json(task, HTTPStatusCodes.OK);
@@ -37,7 +48,9 @@ export const createTask: AppRouteHandler<CreateTaskRoute> = async ({
 export const updateTask: AppRouteHandler<UpdateTaskRoute> = async ({
   json,
   req,
+  env,
 }) => {
+  const { db } = createDb(env);
   const { id } = req.valid("param");
   const updatedTask = req.valid("json");
   const [task] = await db
@@ -54,7 +67,9 @@ export const updateTask: AppRouteHandler<UpdateTaskRoute> = async ({
 export const deleteTask: AppRouteHandler<DeleteTaskRoute> = async ({
   json,
   req,
+  env,
 }) => {
+  const { db } = createDb(env);
   const { id } = req.valid("param");
   const result = await db.delete(tasks).where(eq(tasks.id, id));
   if (!result.rowsAffected) {

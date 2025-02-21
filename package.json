@@ -4,9 +4,14 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "deploy": "wrangler deploy --minify",
+    "dev:wrangler": "wrangler dev",
+    "dev:db": "turso dev --db-file dev.db",
+    "start": "node ./dist/src/index.js",
     "db": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "build": "tsc && tsc-alias"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
@@ -26,8 +31,13 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250214.0",
     "@types/node": "^20.11.17",
     "drizzle-kit": "^0.30.4",
-    "tsx": "^4.7.1"
+    "tsc-alias": "^1.8.10",
+    "tsx": "^4.7.1",
+    "turso": "^0.1.0",
+    "typescript": "^5.7.3",
+    "wrangler": "^3.109.2"
   }
 }
