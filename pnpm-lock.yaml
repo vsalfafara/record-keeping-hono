@@ -31,10 +31,10 @@ importers:
         version: 12.0.1
       drizzle-orm:
         specifier: ^0.39.3
-        version: 0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0)
+        version: 0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0)(postgres@3.4.5)
       drizzle-zod:
         specifier: ^0.7.0
-        version: 0.7.0(drizzle-orm@0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0))(zod@3.24.1)
+        version: 0.7.0(drizzle-orm@0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0)(postgres@3.4.5))(zod@3.24.1)
       hono:
         specifier: ^4.6.20
         version: 4.6.20
@@ -47,6 +47,9 @@ importers:
       pino-pretty:
         specifier: ^13.0.0
         version: 13.0.0
+      postgres:
+        specifier: ^3.4.5
+        version: 3.4.5
       stoker:
         specifier: ^1.4.2
         version: 1.4.2(@asteasolutions/zod-to-openapi@7.3.0(zod@3.24.1))(@hono/zod-openapi@0.18.4(hono@4.6.20)(zod@3.24.1))(hono@4.6.20)(openapi3-ts@4.4.0)
@@ -1378,6 +1381,10 @@ packages:
     resolution: {integrity: sha512-B7+VDyb8Tl6oMJT9oSO2CW8XC/T4UcJGrwOVoNGwOQsQYhlpfajmrMj5xeejqaASq3V/EqThyOeATEOMuSEXiA==}
     engines: {node: '>=12'}
 
+  postgres@3.4.5:
+    resolution: {integrity: sha512-cDWgoah1Gez9rN3H4165peY9qfpEo+SA61oQv65O3cRUE1pOEoJWwddwcqKE8XZYjbblOJlYDlLV4h67HrEVDg==}
+    engines: {node: '>=12'}
+
   printable-characters@1.0.42:
     resolution: {integrity: sha512-dKp+C4iXWK4vVYZmYSd0KBH5F/h1HoZRsbJ82AVKRO3PEo8L4lBS/vLwhVtpwwuYcoIsVY+1JYKR268yn480uQ==}
 
@@ -2216,14 +2223,15 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0):
+  drizzle-orm@0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0)(postgres@3.4.5):
     optionalDependencies:
       '@cloudflare/workers-types': 4.20250214.0
       '@libsql/client': 0.14.0
+      postgres: 3.4.5
 
-  drizzle-zod@0.7.0(drizzle-orm@0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0))(zod@3.24.1):
+  drizzle-zod@0.7.0(drizzle-orm@0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0)(postgres@3.4.5))(zod@3.24.1):
     dependencies:
-      drizzle-orm: 0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0)
+      drizzle-orm: 0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0)(postgres@3.4.5)
       zod: 3.24.1
 
   end-of-stream@1.4.4:
@@ -2572,6 +2580,8 @@ snapshots:
   plimit-lit@1.6.1:
     dependencies:
       queue-lit: 1.5.2
+
+  postgres@3.4.5: {}
 
   printable-characters@1.0.42: {}
 

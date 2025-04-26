@@ -1,33 +1,50 @@
 import type { AppRouteHandler } from "@/lib/types";
-import type { RegisterUserRoute } from "./users.routes";
+import type { CreateUserRoute, GetUserRoute } from "./users.routes";
 import { HTTPStatusCodes } from "@/lib/helpers";
-import db from "@/db";
-import { users } from "@/db/schema";
+import { createDb } from "@/db";
 import { eq } from "drizzle-orm";
+import { users } from "@/db/schema";
 import { genSaltSync, hash } from "bcryptjs";
-import { decode, sign, verify } from "hono/jwt";
-import env from "@/env";
 
-export const registerUser: AppRouteHandler<RegisterUserRoute> = async ({
+export const getUsers: AppRouteHandler<GetUserRoute> = async ({
+  json,
+  env,
+}) => {
+  const { db } = createDb(env);
+  const users = await db.query.users.findMany({
+    columns: {
+      password: false,
+    },
+  });
+  return json(users, HTTPStatusCodes.OK);
+};
+
+export const createUser: AppRouteHandler<CreateUserRoute> = async ({
   json,
   req,
+  env,
 }) => {
+  const { db } = createDb(env);
   const body = req.valid("json");
-  const [userExists] = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, body.email));
+  const userExists = await db.query.users.findFirst({
+    where: eq(users.email, body.email),
+  });
 
-  if (userExists) {
+  if (userExists)
     return json(
       { message: "Email already exists" },
       HTTPStatusCodes.UNPROCESSABLE_ENTITY
     );
-  }
+
   const salt = genSaltSync(10);
   body.password = await hash(body.password, salt);
-  const [newUser] = await db.insert(users).values(body).returning();
-  const { password, ...user } = newUser;
-  const token = await sign(newUser, env.JWT_SECRET);
-  return json({ user, token }, HTTPStatusCodes.OK);
+
+  await db.insert(users).values(body);
+
+  return json(
+    {
+      message: `User ${body.firstName} ${body.lastName} has been created`,
+    },
+    HTTPStatusCodes.OK
+  );
 };

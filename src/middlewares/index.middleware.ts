@@ -4,6 +4,7 @@ import { notFound, onError, serveEmojiFavicon } from "stoker/middlewares";
 import { parseEnv } from "@/env";
 import { config } from "dotenv";
 import { expand } from "dotenv-expand";
+import { cors } from "hono/cors";
 
 expand(config());
 
@@ -12,6 +13,11 @@ export default function configureMiddlewares(app: AppOpenAPI) {
     parseEnv(Object.assign(c.env || {}, process.env));
     return await next();
   });
+  app.use(
+    cors({
+      origin: ["http://localhost:5173"],
+    })
+  );
   app.use(serveEmojiFavicon("🔥"));
   app.use(logger());
   app.notFound(notFound);

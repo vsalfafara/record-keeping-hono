@@ -1,29 +1,17 @@
-import { z, type ZodError } from "zod";
+import { z } from "zod";
 import { config } from "dotenv";
 import { expand } from "dotenv-expand";
 
 expand(config());
 
-const EnvSchema = z
-  .object({
-    NODE_ENV: z.string().default("development"),
-    PORT: z.coerce.number().default(9999),
-    LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]),
-    DB_URL: z.string().url(),
-    DB_AUTH_TOKEN: z.string(),
-    JWT_SECRET: z.string(),
-  })
-  .superRefine((input, ctx) => {
-    if (input.NODE_ENV === "production" && !input.DB_AUTH_TOKEN) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.invalid_type,
-        expected: "string",
-        received: "undefined",
-        path: ["DB_AUTH_TOKEN"],
-        message: "Must be set when NODE_ENV is 'production'",
-      });
-    }
-  });
+const EnvSchema = z.object({
+  NODE_ENV: z.string().default("development"),
+  PORT: z.coerce.number().default(9999),
+  LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]),
+  DATABASE_URL: z.string().url(),
+  SCHEMA: z.string(),
+  JWT_SECRET: z.string(),
+});
 
 export type Environment = z.infer<typeof EnvSchema>;
 

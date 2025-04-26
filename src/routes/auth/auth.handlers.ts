@@ -1,43 +1,11 @@
 import type { AppRouteHandler } from "@/lib/types";
-import type { LoginRoute, RegisterRoute } from "./auth.routes";
+import type { LoginRoute } from "./auth.routes";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { createDb } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { compare, genSaltSync, hash } from "bcryptjs";
 import { sign } from "hono/jwt";
-
-export const register: AppRouteHandler<RegisterRoute> = async ({
-  json,
-  req,
-  env,
-}) => {
-  const { db } = createDb(env);
-  const body = req.valid("json");
-  const userExists = await db.query.users.findFirst({
-    where: eq(users.email, body.email),
-  });
-
-  if (userExists) {
-    return json(
-      { message: "Email already exists" },
-      HTTPStatusCodes.UNPROCESSABLE_ENTITY
-    );
-  }
-
-  const salt = genSaltSync(10);
-  body.password = await hash(body.password, salt);
-
-  const [newUser] = await db.insert(users).values(body).returning();
-  const { password, ...user } = newUser;
-  const payload = {
-    ...user,
-    date: new Date(),
-  };
-  const token = await sign(payload, env.JWT_SECRET);
-
-  return json({ user, token }, HTTPStatusCodes.CREATED);
-};
 
 export const login: AppRouteHandler<LoginRoute> = async ({
   json,
@@ -73,5 +41,5 @@ export const login: AppRouteHandler<LoginRoute> = async ({
   };
   const token = await sign(payload, env.JWT_SECRET);
 
-  return json({ user, token }, HTTPStatusCodes.OK);
+  return json({ data: user, token }, HTTPStatusCodes.OK);
 };

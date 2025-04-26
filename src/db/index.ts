@@ -1,14 +1,10 @@
-import { createClient } from "@libsql/client";
-import { drizzle } from "drizzle-orm/libsql";
+import postgres from "postgres";
+import { drizzle } from "drizzle-orm/postgres-js";
 import * as schema from "./schema";
 import type { Environment } from "@/env";
 
 export function createDb(env: Environment) {
-  const client = createClient({
-    url: env.DB_URL,
-    authToken: env.DB_AUTH_TOKEN,
-  });
-
+  const client = postgres(env.DATABASE_URL, { prepare: false });
   const db = drizzle(client, { schema });
 
   return { db, client };

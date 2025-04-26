@@ -10,6 +10,12 @@ export const auth = async (c: Context, next: Next) => {
       message: "Unauthorized",
     });
   }
-  await verify(token.split(" ")[1], c.env.JWT_SECRET);
+  try {
+    await verify(token.split(" ")[1], c.env.JWT_SECRET);
+  } catch (error) {
+    throw new HTTPException(HTTPStatusCodes.UNAUTHORIZED, {
+      message: "Unauthorized",
+    });
+  }
   await next();
 };
