@@ -4,7 +4,7 @@ import { HTTPStatusCodes } from "@/lib/helpers";
 import { createDb } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { compare, genSaltSync, hash } from "bcryptjs";
+import { compare } from "bcryptjs";
 import { sign } from "hono/jwt";
 
 export const login: AppRouteHandler<LoginRoute> = async ({

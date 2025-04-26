@@ -31,10 +31,10 @@ importers:
         version: 12.0.1
       drizzle-orm:
         specifier: ^0.39.3
-        version: 0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0)(postgres@3.4.5)
+        version: 0.39.3(@cloudflare/workers-types@4.20250426.0)(@libsql/client@0.14.0)(postgres@3.4.5)
       drizzle-zod:
         specifier: ^0.7.0
-        version: 0.7.0(drizzle-orm@0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0)(postgres@3.4.5))(zod@3.24.1)
+        version: 0.7.0(drizzle-orm@0.39.3(@cloudflare/workers-types@4.20250426.0)(@libsql/client@0.14.0)(postgres@3.4.5))(zod@3.24.1)
       hono:
         specifier: ^4.6.20
         version: 4.6.20
@@ -58,8 +58,8 @@ importers:
         version: 3.24.1
     devDependencies:
       '@cloudflare/workers-types':
-        specifier: ^4.20250214.0
-        version: 4.20250214.0
+        specifier: ^4.20250426.0
+        version: 4.20250426.0
       '@types/node':
         specifier: ^20.11.17
         version: 20.17.17
@@ -80,7 +80,7 @@ importers:
         version: 5.7.3
       wrangler:
         specifier: ^3.109.2
-        version: 3.109.2(@cloudflare/workers-types@4.20250214.0)
+        version: 3.109.2(@cloudflare/workers-types@4.20250426.0)
 
 packages:
 
@@ -123,8 +123,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@cloudflare/workers-types@4.20250214.0':
-    resolution: {integrity: sha512-+M8oOFVbyXT5GeJrYLWMUGyPf5wGB4+k59PPqdedtOig7NjZ5r4S79wMdaZ/EV5IV8JPtZBSNjTKpDnNmfxjaQ==}
+  '@cloudflare/workers-types@4.20250426.0':
+    resolution: {integrity: sha512-HFoi66mqOTxznMe09/RDlDS2Bwe6C2LUJP07auJuFZL0H6g3lYGRKf5shvKfB/vhAPwAMh5M9Wzb9Mh2AWzpoA==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -1615,7 +1615,7 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20250214.0':
     optional: true
 
-  '@cloudflare/workers-types@4.20250214.0': {}
+  '@cloudflare/workers-types@4.20250426.0': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -2223,15 +2223,15 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0)(postgres@3.4.5):
+  drizzle-orm@0.39.3(@cloudflare/workers-types@4.20250426.0)(@libsql/client@0.14.0)(postgres@3.4.5):
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20250214.0
+      '@cloudflare/workers-types': 4.20250426.0
       '@libsql/client': 0.14.0
       postgres: 3.4.5
 
-  drizzle-zod@0.7.0(drizzle-orm@0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0)(postgres@3.4.5))(zod@3.24.1):
+  drizzle-zod@0.7.0(drizzle-orm@0.39.3(@cloudflare/workers-types@4.20250426.0)(@libsql/client@0.14.0)(postgres@3.4.5))(zod@3.24.1):
     dependencies:
-      drizzle-orm: 0.39.3(@cloudflare/workers-types@4.20250214.0)(@libsql/client@0.14.0)(postgres@3.4.5)
+      drizzle-orm: 0.39.3(@cloudflare/workers-types@4.20250426.0)(@libsql/client@0.14.0)(postgres@3.4.5)
       zod: 3.24.1
 
   end-of-stream@1.4.4:
@@ -2758,7 +2758,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20250214.0
       '@cloudflare/workerd-windows-64': 1.20250214.0
 
-  wrangler@3.109.2(@cloudflare/workers-types@4.20250214.0):
+  wrangler@3.109.2(@cloudflare/workers-types@4.20250426.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.3.4
       '@esbuild-plugins/node-globals-polyfill': 0.2.3(esbuild@0.17.19)
@@ -2770,7 +2770,7 @@ snapshots:
       unenv: 2.0.0-rc.1
       workerd: 1.20250214.0
     optionalDependencies:
-      '@cloudflare/workers-types': 4.20250214.0
+      '@cloudflare/workers-types': 4.20250426.0
       fsevents: 2.3.3
       sharp: 0.33.5
     transitivePeerDependencies:

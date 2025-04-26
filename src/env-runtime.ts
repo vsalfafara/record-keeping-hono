@@ -1,3 +1,3 @@
-import { Environment, parseEnv } from "./env";
+import { parseEnv } from "./env";
 
 export default parseEnv(process.env);

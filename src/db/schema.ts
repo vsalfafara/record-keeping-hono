@@ -285,7 +285,7 @@ export const insertUserSchema = createInsertSchema(users, {
   firstName: () => z.string().min(1),
   lastName: () => z.string().min(1),
   role: () => z.enum(["ADMIN", "ACCOUNTS_CLERK"]),
-  email: () => z.string().min(1).email(),
+  email: () => z.string().email(),
   password: (schema) =>
     schema.regex(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/, {
       message:
