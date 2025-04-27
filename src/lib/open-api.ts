@@ -12,9 +12,9 @@ export default function configureOpenApi(app: AppOpenAPI) {
   });
 
   app.get(
-    "/reference",
+    "/docs",
     apiReference({
-      pageTitle: "Tasks API Documentation",
+      pageTitle: "Pines Record Keeping API Documentation",
       layout: "classic",
       spec: {
         url: "/doc",

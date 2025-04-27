@@ -1,9 +1,22 @@
-import { insertUserSchema, selectUsersSchema } from "@/db/schema";
+import {
+  insertUserSchema,
+  selectUsersSchema,
+  updateUserSchema,
+} from "@/db/schema";
+import { notFoundSchema } from "@/lib/constants";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { auth } from "@/middlewares/auth";
 import { createRoute, z } from "@hono/zod-openapi";
-import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
-import { createMessageObjectSchema } from "stoker/openapi/schemas";
+import {
+  jsonContent,
+  jsonContentOneOf,
+  jsonContentRequired,
+} from "stoker/openapi/helpers";
+import {
+  createErrorSchema,
+  createMessageObjectSchema,
+  IdParamsSchema,
+} from "stoker/openapi/schemas";
 
 const tags = ["Users"];
 
@@ -17,8 +30,6 @@ export const getUsers = createRoute({
   },
 });
 
-export type GetUserRoute = typeof getUsers;
-
 export const createUser = createRoute({
   tags,
   middleware: auth,
@@ -30,7 +41,7 @@ export const createUser = createRoute({
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
       createMessageObjectSchema("User has been created"),
-      "Selected user"
+      "Created user"
     ),
     [HTTPStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createMessageObjectSchema("Email already exists"),
@@ -39,4 +50,56 @@ export const createUser = createRoute({
   },
 });
 
+export const updateUser = createRoute({
+  tags,
+  middleware: auth,
+  path: "/users/{id}",
+  method: "put",
+  request: {
+    params: IdParamsSchema,
+    body: jsonContentRequired(updateUserSchema, "Update user"),
+  },
+  responses: {
+    [HTTPStatusCodes.OK]: jsonContent(
+      createMessageObjectSchema("User has been updated"),
+      "Updated user"
+    ),
+    [HTTPStatusCodes.UNPROCESSABLE_ENTITY]: jsonContentOneOf(
+      [createErrorSchema(IdParamsSchema), createErrorSchema(updateUserSchema)],
+      "Validation error"
+    ),
+    [HTTPStatusCodes.NOT_FOUND]: jsonContent(
+      notFoundSchema("User not found"),
+      "User not found"
+    ),
+  },
+});
+
+export const deleteUser = createRoute({
+  tags,
+  middleware: auth,
+  path: "/users/{id}",
+  method: "delete",
+  request: {
+    params: IdParamsSchema,
+  },
+  responses: {
+    [HTTPStatusCodes.OK]: jsonContent(
+      createMessageObjectSchema("User has been deleted"),
+      "Deleted user"
+    ),
+    [HTTPStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(IdParamsSchema),
+      "Validation error"
+    ),
+    [HTTPStatusCodes.NOT_FOUND]: jsonContent(
+      notFoundSchema("User not found"),
+      "User not found"
+    ),
+  },
+});
+
+export type GetUserRoute = typeof getUsers;
 export type CreateUserRoute = typeof createUser;
+export type UpdateUserRoute = typeof updateUser;
+export type DeleteUserRoute = typeof deleteUser;

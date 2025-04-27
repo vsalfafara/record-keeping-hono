@@ -301,6 +301,10 @@ export const insertUserSchema = createInsertSchema(users, {
   })
   .omit({ hasLoggedInOnce: true });
 
+export const updateUserSchema = insertUserSchema
+  .partial()
+  .omit({ createdBy: true, createdOn: true });
+
 export const loginSchema = insertUserSchema
   .extend({ password: z.string() })
   .omit({
@@ -310,6 +314,24 @@ export const loginSchema = insertUserSchema
     createdBy: true,
     createdOn: true,
   });
+
+export const selectPropertiesSchema = z.object({
+  properties: z.array(
+    createSelectSchema(properties).extend({
+      numberOfBlocks: z.number(),
+      numberOfLots: z.number(),
+      takenLots: z.number(),
+      availableLots: z.number(),
+    })
+  ),
+  totalAvailableLots: z.number(),
+  totalTakenLots: z.number(),
+});
+
+export const insertPropertySchema = createInsertSchema(properties, {
+  name: z.string().min(1),
+  fullAddress: z.string().min(1),
+}).required({ name: true, fullAddress: true });
 
 // function timestamps() {
 //   return {
