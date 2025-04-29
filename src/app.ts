@@ -6,10 +6,11 @@ import configureMiddlewares from "./middlewares/index.middleware";
 import auths from "@/routes/auth/auth.index";
 import users from "@/routes/users/users.index";
 import properties from "@/routes/properties/properties.index";
+import blocks from "@/routes/blocks/blocks.index";
 
 const app = createApp();
 
-const routes = [auths, users, properties];
+const routes = [auths, users, properties, blocks];
 configureOpenApi(app);
 configureMiddlewares(app);
 

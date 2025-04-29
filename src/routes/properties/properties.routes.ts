@@ -1,9 +1,24 @@
-import { insertPropertySchema, selectPropertiesSchema } from "@/db/schema";
+import {
+  getBlocksSchema,
+  insertPropertySchema,
+  selectPropertiesSchema,
+  selectPropertySchema,
+  updatePropertySchema,
+} from "@/db/schema";
+import { notFoundSchema } from "@/lib/constants";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { auth } from "@/middlewares/auth";
 import { createRoute, z } from "@hono/zod-openapi";
-import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
-import { createMessageObjectSchema } from "stoker/openapi/schemas";
+import {
+  jsonContent,
+  jsonContentOneOf,
+  jsonContentRequired,
+} from "stoker/openapi/helpers";
+import {
+  createErrorSchema,
+  createMessageObjectSchema,
+  IdParamsSchema,
+} from "stoker/openapi/schemas";
 
 const tags = ["Properties"];
 
@@ -33,5 +48,79 @@ export const createProperty = createRoute({
   },
 });
 
+export const getProperty = createRoute({
+  tags,
+  middleware: auth,
+  path: "/properties/{id}",
+  method: "get",
+  request: {
+    params: IdParamsSchema,
+  },
+  responses: {
+    [HTTPStatusCodes.OK]: jsonContent(selectPropertySchema, "Get Property"),
+    [HTTPStatusCodes.NOT_FOUND]: jsonContent(
+      notFoundSchema("User not found"),
+      "User not found"
+    ),
+  },
+});
+
+export const getPropertyBlocks = createRoute({
+  tags,
+  middleware: auth,
+  path: "/properties/{id}/blocks",
+  method: "get",
+  request: {
+    params: IdParamsSchema,
+  },
+  responses: {
+    [HTTPStatusCodes.OK]: jsonContent(
+      z.array(
+        getBlocksSchema.extend({
+          numberOfLots: z.number(),
+          takenLots: z.number(),
+          availableLots: z.number(),
+        })
+      ),
+      "List of Property's Blocks"
+    ),
+    [HTTPStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(IdParamsSchema),
+      "Validation error"
+    ),
+  },
+});
+
+export const updateProperty = createRoute({
+  tags,
+  middleware: auth,
+  path: "/properties/{id}",
+  method: "put",
+  request: {
+    params: IdParamsSchema,
+    body: jsonContentRequired(updatePropertySchema, "Updated Property"),
+  },
+  responses: {
+    [HTTPStatusCodes.OK]: jsonContent(
+      createMessageObjectSchema("Property has been updated"),
+      "Updated Property"
+    ),
+    [HTTPStatusCodes.UNPROCESSABLE_ENTITY]: jsonContentOneOf(
+      [
+        createErrorSchema(IdParamsSchema),
+        createErrorSchema(updatePropertySchema),
+      ],
+      "Validation error"
+    ),
+    [HTTPStatusCodes.NOT_FOUND]: jsonContent(
+      notFoundSchema("Property not found"),
+      "Property not found"
+    ),
+  },
+});
+
 export type GetPropertiesRoute = typeof getProperties;
 export type CreatePropertyRoute = typeof createProperty;
+export type GetPropertyRoute = typeof getProperty;
+export type GetPropertyBlocksRoute = typeof getPropertyBlocks;
+export type UpdatePropertyRoute = typeof updateProperty;

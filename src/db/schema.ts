@@ -315,15 +315,15 @@ export const loginSchema = insertUserSchema
     createdOn: true,
   });
 
+export const selectPropertySchema = createSelectSchema(properties).extend({
+  numberOfBlocks: z.number(),
+  numberOfLots: z.number(),
+  takenLots: z.number(),
+  availableLots: z.number(),
+});
+
 export const selectPropertiesSchema = z.object({
-  properties: z.array(
-    createSelectSchema(properties).extend({
-      numberOfBlocks: z.number(),
-      numberOfLots: z.number(),
-      takenLots: z.number(),
-      availableLots: z.number(),
-    })
-  ),
+  properties: z.array(selectPropertySchema),
   totalAvailableLots: z.number(),
   totalTakenLots: z.number(),
 });
@@ -332,6 +332,18 @@ export const insertPropertySchema = createInsertSchema(properties, {
   name: z.string().min(1),
   fullAddress: z.string().min(1),
 }).required({ name: true, fullAddress: true });
+
+export const updatePropertySchema = insertPropertySchema.partial().omit({
+  createdBy: true,
+  createdOn: true,
+});
+
+export const getBlocksSchema = createSelectSchema(blocks);
+
+export const insertBlockSchema = createInsertSchema(blocks, {
+  propertyId: z.number(),
+  name: z.string().min(1),
+}).required({ name: true });
 
 // function timestamps() {
 //   return {

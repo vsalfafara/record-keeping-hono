@@ -1,8 +1,15 @@
 import { AppRouteHandler } from "@/lib/types";
-import { CreatePropertyRoute, GetPropertiesRoute } from "./properties.routes";
+import {
+  CreatePropertyRoute,
+  GetPropertiesRoute,
+  GetPropertyBlocksRoute,
+  GetPropertyRoute,
+  UpdatePropertyRoute,
+} from "./properties.routes";
 import { createDb } from "@/db";
 import { HTTPStatusCodes } from "@/lib/helpers";
-import { properties } from "@/db/schema";
+import { blocks, lots, properties } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export const getProperties: AppRouteHandler<GetPropertiesRoute> = async ({
   json,
@@ -23,7 +30,7 @@ export const getProperties: AppRouteHandler<GetPropertiesRoute> = async ({
   let totalTakenLots = 0;
 
   const propertiesInfo = properties.map((property) => {
-    const { blocks, ...otherPropertyInfo } = property;
+    const { blocks, ...propertyInfo } = property;
 
     const numberOfBlocks = property.blocks.length;
     const numberOfLots = blocks.reduce((current: number, block) => {
@@ -40,11 +47,11 @@ export const getProperties: AppRouteHandler<GetPropertiesRoute> = async ({
     totalTakenLots += takenLots;
 
     return {
+      ...propertyInfo,
       numberOfBlocks,
       numberOfLots,
       takenLots,
       availableLots,
-      ...otherPropertyInfo,
     };
   });
 
@@ -55,6 +62,93 @@ export const getProperties: AppRouteHandler<GetPropertiesRoute> = async ({
   };
 
   return json(response, HTTPStatusCodes.OK);
+};
+
+export const getProperty: AppRouteHandler<GetPropertyRoute> = async ({
+  json,
+  req,
+  env,
+}) => {
+  const { id } = req.valid("param");
+  const { db } = createDb(env);
+
+  let property: any = await db.query.properties.findFirst({
+    where: eq(properties.id, id),
+  });
+
+  if (!property)
+    return json({ message: "Property not found" }, HTTPStatusCodes.NOT_FOUND);
+
+  const blocksCount = await db.query.blocks.findMany({
+    where: eq(blocks.propertyId, id),
+    with: {
+      lots: true,
+    },
+  });
+
+  const numberOfBlocks = blocksCount.length;
+  let numberOfLots = 0;
+  let takenLots = 0;
+  let availableLots = 0;
+
+  if (numberOfBlocks) {
+    numberOfLots = blocksCount.reduce((current: number, block) => {
+      return (current += block.lots.length);
+    }, 0);
+    takenLots = blocksCount.reduce((current: number, block) => {
+      return (current += block.lots.filter((lot) => lot.taken).length);
+    }, 0);
+    availableLots = blocksCount.reduce((current: number, block) => {
+      return (current += block.lots.filter((lot) => !lot.taken).length);
+    }, 0);
+  }
+
+  property = {
+    ...property,
+    numberOfBlocks,
+    numberOfLots,
+    takenLots,
+    availableLots,
+  };
+
+  return json(property, HTTPStatusCodes.OK);
+};
+
+export const getPropertyBlocks: AppRouteHandler<
+  GetPropertyBlocksRoute
+> = async ({ json, req, env }) => {
+  const { id } = req.valid("param");
+  const { db } = createDb(env);
+
+  const propertyBlocks = await db.query.blocks.findMany({
+    where: eq(blocks.propertyId, id),
+    with: {
+      lots: {
+        columns: {
+          taken: true,
+        },
+      },
+    },
+  });
+
+  const stats = propertyBlocks.map((block) => {
+    const { lots, ...blockInfo } = block;
+    let numberOfLots = block.lots.length;
+    let takenLots = 0;
+    let availableLots = 0;
+    lots.forEach((lot) => {
+      takenLots += lot.taken ? 1 : 0;
+      availableLots += !lot.taken ? 1 : 0;
+    });
+    return {
+      ...blockInfo,
+      numberOfLots,
+      takenLots,
+      availableLots,
+    };
+  });
+
+  return json(stats, HTTPStatusCodes.OK);
 };
 
 export const createProperty: AppRouteHandler<CreatePropertyRoute> = async ({
@@ -69,6 +163,30 @@ export const createProperty: AppRouteHandler<CreatePropertyRoute> = async ({
 
   return json(
     { message: `Property ${property.name} has been created` },
+    HTTPStatusCodes.OK
+  );
+};
+
+export const updateProperty: AppRouteHandler<UpdatePropertyRoute> = async ({
+  json,
+  req,
+  env,
+}) => {
+  const { id } = req.valid("param");
+  const { db } = createDb(env);
+  const body = req.valid("json");
+
+  const [property] = await db
+    .update(properties)
+    .set(body)
+    .where(eq(properties.id, id))
+    .returning();
+
+  if (!property)
+    return json({ message: "Property not found" }, HTTPStatusCodes.NOT_FOUND);
+
+  return json(
+    { message: `Property ${property.name} has been updated` },
     HTTPStatusCodes.OK
   );
 };
