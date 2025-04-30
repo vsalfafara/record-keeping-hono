@@ -1,0 +1,1 @@
+ALTER TABLE "client_lots" ADD COLUMN "downpayment_price" double precision;

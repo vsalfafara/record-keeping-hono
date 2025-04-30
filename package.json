@@ -10,7 +10,7 @@
     "start": "node ./dist/src/index.js",
     "db": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate",
     "build": "tsc && tsc-alias"
   },
   "dependencies": {
@@ -34,7 +34,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250426.0",
     "@types/node": "^20.11.17",
-    "drizzle-kit": "^0.30.4",
+    "drizzle-kit": "^0.31.0",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.7.1",
     "turso": "^0.1.0",

@@ -1,6 +1,6 @@
 {
-  "id": "5d2f4aa2-f1de-48af-91ff-16416ebdb208",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "7d1521b8-2ee9-43b0-98d5-1f319f4250ee",
+  "prevId": "c8d35057-fd51-403a-bf99-3c00a95d83fe",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -142,7 +142,7 @@
         },
         "perpetual_care_price": {
           "name": "perpetual_care_price",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": false
         },
@@ -332,6 +332,14 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "modeOfPayment": {
+          "name": "modeOfPayment",
+          "type": "mode_of_payment",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Cash Payment'"
         },
         "date_of_payment": {
           "name": "date_of_payment",
@@ -533,6 +541,14 @@
           "primaryKey": false,
           "notNull": true
         },
+        "modeOfPayment": {
+          "name": "modeOfPayment",
+          "type": "mode_of_payment",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Cash Payment'"
+        },
         "date_of_payment": {
           "name": "date_of_payment",
           "type": "date",
@@ -693,7 +709,7 @@
         },
         "payment_due": {
           "name": "payment_due",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         }
@@ -888,6 +904,15 @@
         "Inner",
         "Pathway",
         "Roadside"
+      ]
+    },
+    "public.mode_of_payment": {
+      "name": "mode_of_payment",
+      "schema": "public",
+      "values": [
+        "Bank Transfer",
+        "Cash Payment",
+        "Check Payment"
       ]
     },
     "public.role": {

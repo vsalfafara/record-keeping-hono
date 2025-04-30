@@ -1,6 +1,6 @@
 {
-  "id": "5d2f4aa2-f1de-48af-91ff-16416ebdb208",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "afb9a3a9-f48a-4d32-9194-8c60b9cd4125",
+  "prevId": "a44640e1-dcd0-4d4f-86f0-79ace0332954",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -140,15 +140,21 @@
           "primaryKey": false,
           "notNull": false
         },
+        "downpayment_price": {
+          "name": "downpayment_price",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false
+        },
         "perpetual_care_price": {
           "name": "perpetual_care_price",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": false
         },
         "discount": {
           "name": "discount",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": false
         },
@@ -160,25 +166,25 @@
         },
         "monthly": {
           "name": "monthly",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": false
         },
         "total_interest": {
           "name": "total_interest",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": false
         },
         "actual_price": {
           "name": "actual_price",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": false
         },
         "balance": {
           "name": "balance",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": false
         },
@@ -332,6 +338,14 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "modeOfPayment": {
+          "name": "modeOfPayment",
+          "type": "mode_of_payment",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Cash Payment'"
         },
         "date_of_payment": {
           "name": "date_of_payment",
@@ -529,9 +543,17 @@
         },
         "payment": {
           "name": "payment",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
+        },
+        "modeOfPayment": {
+          "name": "modeOfPayment",
+          "type": "mode_of_payment",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Cash Payment'"
         },
         "date_of_payment": {
           "name": "date_of_payment",
@@ -652,6 +674,60 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.payment_plans": {
+      "name": "payment_plans",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "payment_plans_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "client_lot_id": {
+          "name": "client_lot_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "installment_months": {
+          "name": "installment_months",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "due_date": {
+          "name": "due_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payment_due": {
+          "name": "payment_due",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.perpetual_cares": {
       "name": "perpetual_cares",
       "schema": "",
@@ -693,7 +769,7 @@
         },
         "payment_due": {
           "name": "payment_due",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         }
@@ -888,6 +964,15 @@
         "Inner",
         "Pathway",
         "Roadside"
+      ]
+    },
+    "public.mode_of_payment": {
+      "name": "mode_of_payment",
+      "schema": "public",
+      "values": [
+        "Bank Transfer",
+        "Cash Payment",
+        "Check Payment"
       ]
     },
     "public.role": {

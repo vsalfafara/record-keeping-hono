@@ -1,12 +1,103 @@
 {
   "version": "7",
-  "dialect": "sqlite",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "6",
-      "when": 1739902220161,
-      "tag": "0000_fluffy_red_skull",
+      "version": "7",
+      "when": 1736683718674,
+      "tag": "0000_workable_enchantress",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1736784921755,
+      "tag": "0001_reflective_orphan",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1736785348424,
+      "tag": "0002_even_ozymandias",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1736788226494,
+      "tag": "0003_wild_warlock",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1736788283454,
+      "tag": "0004_clever_rocket_racer",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1739276589226,
+      "tag": "0005_flat_wolfsbane",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1739547191672,
+      "tag": "0006_groovy_rafael_vega",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1739555902909,
+      "tag": "0007_rare_ironclad",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1739563831093,
+      "tag": "0008_bright_junta",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1739715406943,
+      "tag": "0009_yielding_lady_mastermind",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1739989640750,
+      "tag": "0010_nice_screwball",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1740158184979,
+      "tag": "0011_fluffy_madame_web",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1740160111029,
+      "tag": "0012_square_dust",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1746045592904,
+      "tag": "0013_yielding_mathemanic",
       "breakpoints": true
     }
   ]

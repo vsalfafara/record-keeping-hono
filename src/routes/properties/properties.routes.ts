@@ -1,5 +1,5 @@
 import {
-  getBlocksSchema,
+  selectBlocksSchema,
   insertPropertySchema,
   selectPropertiesSchema,
   selectPropertySchema,
@@ -76,7 +76,7 @@ export const getPropertyBlocks = createRoute({
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
       z.array(
-        getBlocksSchema.extend({
+        selectBlocksSchema.extend({
           numberOfLots: z.number(),
           takenLots: z.number(),
           availableLots: z.number(),

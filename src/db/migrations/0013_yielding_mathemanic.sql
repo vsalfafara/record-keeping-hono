@@ -1,0 +1,1 @@
+ALTER TABLE "lots" ALTER COLUMN "price" SET DATA TYPE double precision;

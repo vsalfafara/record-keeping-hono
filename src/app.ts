@@ -7,10 +7,11 @@ import auths from "@/routes/auth/auth.index";
 import users from "@/routes/users/users.index";
 import properties from "@/routes/properties/properties.index";
 import blocks from "@/routes/blocks/blocks.index";
+import lots from "@/routes/lots/lots.index";
 
 const app = createApp();
 
-const routes = [auths, users, properties, blocks];
+const routes = [auths, users, properties, blocks, lots];
 configureOpenApi(app);
 configureMiddlewares(app);
 

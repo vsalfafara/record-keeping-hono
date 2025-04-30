@@ -1,6 +1,6 @@
 {
-  "id": "5d2f4aa2-f1de-48af-91ff-16416ebdb208",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "97257fee-fbb0-4d40-b386-7dbeaa59c884",
+  "prevId": "5d2f4aa2-f1de-48af-91ff-16416ebdb208",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -533,6 +533,14 @@
           "primaryKey": false,
           "notNull": true
         },
+        "modeOfPayment": {
+          "name": "modeOfPayment",
+          "type": "mode_of_payment",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Cash Payment'"
+        },
         "date_of_payment": {
           "name": "date_of_payment",
           "type": "date",
@@ -888,6 +896,15 @@
         "Inner",
         "Pathway",
         "Roadside"
+      ]
+    },
+    "public.mode_of_payment": {
+      "name": "mode_of_payment",
+      "schema": "public",
+      "values": [
+        "Bank Transfer",
+        "Cash Payment",
+        "Check Payment"
       ]
     },
     "public.role": {

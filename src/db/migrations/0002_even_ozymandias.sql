@@ -1,0 +1,1 @@
+ALTER TABLE "expenses" ADD COLUMN "modeOfPayment" "mode_of_payment" DEFAULT 'Cash Payment' NOT NULL;

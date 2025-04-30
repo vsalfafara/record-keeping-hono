@@ -1,0 +1,1 @@
+ALTER TABLE "expenses" ALTER COLUMN "payment" SET DATA TYPE double precision;

@@ -1,0 +1,1 @@
+ALTER TABLE "client_lots" ALTER COLUMN "perpetual_care_price" SET DATA TYPE double precision;

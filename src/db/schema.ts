@@ -72,7 +72,7 @@ export const lots = t.pgTable("lots", {
   blockId: t.integer("block_id"),
   name: t.varchar("name").notNull(),
   lotType: lotTypes().notNull(),
-  price: t.decimal().notNull(),
+  price: t.doublePrecision().notNull(),
   remarks: t.varchar(),
   taken: t.boolean().notNull().default(false),
   createdBy: t.varchar("created_by").notNull(),
@@ -338,12 +338,36 @@ export const updatePropertySchema = insertPropertySchema.partial().omit({
   createdOn: true,
 });
 
-export const getBlocksSchema = createSelectSchema(blocks);
+export const selectBlocksSchema = createSelectSchema(blocks);
 
 export const insertBlockSchema = createInsertSchema(blocks, {
   propertyId: z.number(),
   name: z.string().min(1),
-}).required({ name: true });
+}).required({ propertyId: true, name: true });
+
+export const updateBlockSchema = insertBlockSchema.partial().omit({
+  propertyId: true,
+  createdBy: true,
+  createdOn: true,
+});
+
+export const selectLotsSchema = createSelectSchema(lots).extend({
+  price: z.number(),
+});
+
+export const insertLotSchema = createInsertSchema(lots, {
+  blockId: z.number(),
+  name: z.string().min(1),
+  price: z.number().min(0.01).multipleOf(0.01),
+  remarks: z.string().optional(),
+}).required({ blockId: true, name: true, price: true });
+
+export const updateLotSchema = insertLotSchema.partial().omit({
+  blockId: true,
+  taken: true,
+  createdBy: true,
+  createdOn: true,
+});
 
 // function timestamps() {
 //   return {
