@@ -29,6 +29,10 @@ export const createLot = createRoute({
       createMessageObjectSchema("Lot has been created"),
       "Created Lot"
     ),
+    [HTTPStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(insertLotSchema),
+      "Validation error"
+    ),
   },
 });
 

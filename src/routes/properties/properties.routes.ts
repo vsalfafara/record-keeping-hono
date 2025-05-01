@@ -4,6 +4,7 @@ import {
   selectPropertiesSchema,
   selectPropertySchema,
   updatePropertySchema,
+  selectPropertyListSchema,
 } from "@/db/schema";
 import { notFoundSchema } from "@/lib/constants";
 import { HTTPStatusCodes } from "@/lib/helpers";
@@ -29,6 +30,19 @@ export const getProperties = createRoute({
   method: "get",
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(selectPropertiesSchema, "Get Properties"),
+  },
+});
+
+export const getPropertiesList = createRoute({
+  tags,
+  middleware: auth,
+  path: "/properties/list",
+  method: "get",
+  responses: {
+    [HTTPStatusCodes.OK]: jsonContent(
+      z.array(selectPropertyListSchema),
+      "Get Properties"
+    ),
   },
 });
 
@@ -91,6 +105,26 @@ export const getPropertyBlocks = createRoute({
   },
 });
 
+export const getPropertyBlocksList = createRoute({
+  tags,
+  middleware: auth,
+  path: "/properties/{id}/blocks/list",
+  method: "get",
+  request: {
+    params: IdParamsSchema,
+  },
+  responses: {
+    [HTTPStatusCodes.OK]: jsonContent(
+      z.array(selectBlocksSchema),
+      "List of Property's Blocks"
+    ),
+    [HTTPStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(IdParamsSchema),
+      "Validation error"
+    ),
+  },
+});
+
 export const updateProperty = createRoute({
   tags,
   middleware: auth,
@@ -120,7 +154,9 @@ export const updateProperty = createRoute({
 });
 
 export type GetPropertiesRoute = typeof getProperties;
+export type GetPropertiesListRoute = typeof getPropertiesList;
 export type CreatePropertyRoute = typeof createProperty;
 export type GetPropertyRoute = typeof getProperty;
 export type GetPropertyBlocksRoute = typeof getPropertyBlocks;
+export type GetPropertyBlocksListRoute = typeof getPropertyBlocksList;
 export type UpdatePropertyRoute = typeof updateProperty;

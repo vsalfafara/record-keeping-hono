@@ -5,6 +5,7 @@ import { parseEnv } from "@/env";
 import { config } from "dotenv";
 import { expand } from "dotenv-expand";
 import { cors } from "hono/cors";
+import { origin } from "@/lib/constants";
 
 expand(config());
 
@@ -15,7 +16,7 @@ export default function configureMiddlewares(app: AppOpenAPI) {
   });
   app.use(
     cors({
-      origin: ["http://localhost:5173", "https://record-keeping-vue.pages.dev"],
+      origin,
     })
   );
   app.use(serveEmojiFavicon("🔥"));

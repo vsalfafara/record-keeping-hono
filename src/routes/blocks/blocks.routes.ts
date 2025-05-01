@@ -54,6 +54,26 @@ export const getBlockLots = createRoute({
   },
 });
 
+export const getBlockLotsNotTaken = createRoute({
+  tags,
+  middleware: auth,
+  path: "/blocks/{id}/lots/not-taken",
+  method: "get",
+  request: {
+    params: IdParamsSchema,
+  },
+  responses: {
+    [HTTPStatusCodes.OK]: jsonContent(
+      z.array(selectLotsSchema),
+      "Get Block Lots"
+    ),
+    [HTTPStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(IdParamsSchema),
+      "Validation error"
+    ),
+  },
+});
+
 export const createBlock = createRoute({
   tags,
   middleware: auth,
@@ -66,6 +86,10 @@ export const createBlock = createRoute({
     [HTTPStatusCodes.OK]: jsonContent(
       createMessageObjectSchema("Block has been created"),
       "Created Block"
+    ),
+    [HTTPStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(insertBlockSchema),
+      "Validation error"
     ),
   },
 });
@@ -98,4 +122,5 @@ export const updateBlock = createRoute({
 export type CreateBlockRoute = typeof createBlock;
 export type GetBlockRoute = typeof getBlock;
 export type GetBlockLotsRoute = typeof getBlockLots;
+export type GetBlockLotsNotTakenRoute = typeof getBlockLotsNotTaken;
 export type UpdateBlockRoute = typeof updateBlock;

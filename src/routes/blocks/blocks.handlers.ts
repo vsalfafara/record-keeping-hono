@@ -1,6 +1,7 @@
 import { AppRouteHandler } from "@/lib/types";
 import {
   CreateBlockRoute,
+  GetBlockLotsNotTakenRoute,
   GetBlockLotsRoute,
   GetBlockRoute,
   UpdateBlockRoute,
@@ -8,7 +9,7 @@ import {
 import { createDb } from "@/db";
 import { blocks, lots } from "@/db/schema";
 import { HTTPStatusCodes } from "@/lib/helpers";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export const getBlock: AppRouteHandler<GetBlockRoute> = async ({
   json,
@@ -35,6 +36,19 @@ export const getBlockLots: AppRouteHandler<GetBlockLotsRoute> = async ({
 
   const lotsList = await db.query.lots.findMany({
     where: eq(lots.blockId, id),
+  });
+
+  return json(lotsList, HTTPStatusCodes.OK);
+};
+
+export const getBlockLotsNotTaken: AppRouteHandler<
+  GetBlockLotsNotTakenRoute
+> = async ({ json, req, env }) => {
+  const { id } = req.valid("param");
+  const { db } = createDb(env);
+
+  const lotsList = await db.query.lots.findMany({
+    where: and(eq(lots.blockId, id), eq(lots.taken, false)),
   });
 
   return json(lotsList, HTTPStatusCodes.OK);

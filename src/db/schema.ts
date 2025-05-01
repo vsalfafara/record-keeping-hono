@@ -315,7 +315,9 @@ export const loginSchema = insertUserSchema
     createdOn: true,
   });
 
-export const selectPropertySchema = createSelectSchema(properties).extend({
+export const selectPropertyListSchema = createSelectSchema(properties);
+
+export const selectPropertySchema = selectPropertyListSchema.extend({
   numberOfBlocks: z.number(),
   numberOfLots: z.number(),
   takenLots: z.number(),
@@ -368,6 +370,32 @@ export const updateLotSchema = insertLotSchema.partial().omit({
   createdBy: true,
   createdOn: true,
 });
+
+export const selectClientsSchema = createSelectSchema(clients);
+
+export const insertClientSchema = createInsertSchema(clients, {
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  birthDate: z.string(),
+  email: z.string().min(1).email(),
+  fullAddress: z.string().min(1),
+  mobileNumber: z.string().min(1),
+  landlineNumber: z.string().optional(),
+}).required({
+  firstName: true,
+  lastName: true,
+  birthDate: true,
+  email: true,
+  fullAddress: true,
+  mobileNumber: true,
+});
+
+export const updateClientSchema = insertClientSchema.partial().omit({
+  createdBy: true,
+  createdOn: true,
+});
+
+export const selectClientLotsSchema = createSelectSchema(clientLots);
 
 // function timestamps() {
 //   return {

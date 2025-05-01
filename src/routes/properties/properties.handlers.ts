@@ -1,14 +1,16 @@
 import { AppRouteHandler } from "@/lib/types";
 import {
   CreatePropertyRoute,
+  GetPropertiesListRoute,
   GetPropertiesRoute,
+  GetPropertyBlocksListRoute,
   GetPropertyBlocksRoute,
   GetPropertyRoute,
   UpdatePropertyRoute,
 } from "./properties.routes";
 import { createDb } from "@/db";
 import { HTTPStatusCodes } from "@/lib/helpers";
-import { blocks, lots, properties } from "@/db/schema";
+import { blocks, properties } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const getProperties: AppRouteHandler<GetPropertiesRoute> = async ({
@@ -62,6 +64,16 @@ export const getProperties: AppRouteHandler<GetPropertiesRoute> = async ({
   };
 
   return json(response, HTTPStatusCodes.OK);
+};
+
+export const getPropertiesList: AppRouteHandler<
+  GetPropertiesListRoute
+> = async ({ json, env }) => {
+  const { db } = createDb(env);
+
+  const properties = await db.query.properties.findMany();
+
+  return json(properties, HTTPStatusCodes.OK);
 };
 
 export const getProperty: AppRouteHandler<GetPropertyRoute> = async ({
@@ -149,6 +161,19 @@ export const getPropertyBlocks: AppRouteHandler<
   });
 
   return json(stats, HTTPStatusCodes.OK);
+};
+
+export const getPropertyBlocksList: AppRouteHandler<
+  GetPropertyBlocksListRoute
+> = async ({ json, req, env }) => {
+  const { id } = req.valid("param");
+  const { db } = createDb(env);
+
+  const blocksList = await db.query.blocks.findMany({
+    where: eq(blocks.propertyId, id),
+  });
+
+  return json(blocksList, HTTPStatusCodes.OK);
 };
 
 export const createProperty: AppRouteHandler<CreatePropertyRoute> = async ({
