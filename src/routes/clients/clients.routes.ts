@@ -7,7 +7,6 @@ import {
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { auth } from "@/middlewares/auth";
 import { createRoute, z } from "@hono/zod-openapi";
-import { httpCfgSym } from "hono-pino";
 import {
   jsonContent,
   jsonContentOneOf,

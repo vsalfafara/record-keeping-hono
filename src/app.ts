@@ -9,10 +9,22 @@ import properties from "@/routes/properties/properties.index";
 import blocks from "@/routes/blocks/blocks.index";
 import lots from "@/routes/lots/lots.index";
 import clients from "@/routes/clients/clients.index";
+import clientLots from "@/routes/client-lots/client-lots.index";
+import invoices from "@/routes/invoices/invoices.index";
 
 const app = createApp();
 
-const routes = [auths, users, properties, blocks, lots, clients];
+const routes = [
+  auths,
+  users,
+  properties,
+  blocks,
+  lots,
+  clients,
+  clientLots,
+  invoices,
+];
+
 configureOpenApi(app);
 configureMiddlewares(app);
 

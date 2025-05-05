@@ -397,6 +397,65 @@ export const updateClientSchema = insertClientSchema.partial().omit({
 
 export const selectClientLotsSchema = createSelectSchema(clientLots);
 
+export const insertDIWISchema = createInsertSchema(clientLots, {
+  clientId: z.number(),
+  propertyId: z.number(),
+  blockId: z.number(),
+  lotId: z.number(),
+  paymentType: z.literal("Monthly Terms"),
+  paymentPlan: z.literal("Downpayment and Installment (with interest)"),
+  terms: z.number().multipleOf(0.01),
+  downpayment: z.string(),
+  downpaymentPrice: z.number().multipleOf(0.01),
+  monthsToPay: z.number(),
+  monthly: z.number().multipleOf(0.01),
+  actualPrice: z.number().multipleOf(0.01),
+  discount: z.number().multipleOf(0.01).optional(),
+  balance: z.number().multipleOf(0.01),
+  agent: z.string().optional(),
+})
+  .required({
+    clientId: true,
+    propertyId: true,
+    blockId: true,
+    lotId: true,
+    paymentType: true,
+    paymentPlan: true,
+    terms: true,
+    downpayment: true,
+    downpaymentPrice: true,
+    actualPrice: true,
+  })
+  .omit({
+    inNeed: true,
+  });
+
+export const selectInvoicesSchema = createSelectSchema(invoices);
+
+export const insertInvoiceSchema = createInsertSchema(invoices, {
+  clientLotId: z.number(),
+  purpose: z.enum([
+    "Full Payment",
+    "Downpayment",
+    "Payment Plan",
+    "Interment",
+    "Perpetual Care",
+    "Reservation",
+  ]),
+  payment: z.number().multipleOf(0.01),
+  modeOfPayment: z.enum(["Bank Transfer", "Cash Payment", "Check Payment"]),
+  dateOfPayment: z.string(),
+  receipt: z.string(),
+  remarks: z.string().optional(),
+}).required({
+  clientLotId: true,
+  purpose: true,
+  payment: true,
+  modeOfPayment: true,
+  dateOfPayment: true,
+  receipt: true,
+});
+
 // function timestamps() {
 //   return {
 //     createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
