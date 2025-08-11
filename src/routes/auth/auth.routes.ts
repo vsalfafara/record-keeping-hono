@@ -1,4 +1,4 @@
-import { insertUserSchema, loginSchema, selectUsersSchema } from "@/db/schema";
+import { loginSchema, selectUsersSchema } from "@/db/schema";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";

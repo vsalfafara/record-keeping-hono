@@ -123,11 +123,13 @@ export const paymentPlans = t.pgTable("payment_plans", {
     .integer("client_lot_id")
     .notNull()
     .references(() => clientLots.id, { onDelete: "cascade" }),
+  status: t.varchar("status").default("Pending"),
   installmentMonths: t.varchar("installment_months"),
   dueDate: t.date("due_date", { mode: "string" }).notNull(),
   discount: t.doublePrecision("discount").notNull().default(0),
   penalty: t.doublePrecision("penalty").notNull().default(0),
   paymentDue: t.doublePrecision("payment_due").notNull(),
+  paid: t.doublePrecision("paid").default(0),
 });
 
 export const interments = t.pgTable("interments", {
@@ -455,6 +457,29 @@ export const insertInvoiceSchema = createInsertSchema(invoices, {
   dateOfPayment: true,
   receipt: true,
 });
+
+export const selectPaymentPlansSchema = createSelectSchema(paymentPlans);
+
+export const insertPaymentPlansSchema = createInsertSchema(paymentPlans, {
+  installmentMonths: z.number(),
+  paymentDue: z.number(),
+})
+  .extend({
+    dateOfPayment: z.string(),
+    withInterest: z.boolean(),
+  })
+  .required({
+    installmentMonths: true,
+    paymentDue: true,
+    dateOfPayment: true,
+    withInterest: true,
+  })
+  .omit({
+    clientLotId: true,
+    dueDate: true,
+    penalty: true,
+    paid: true,
+  });
 
 // function timestamps() {
 //   return {
