@@ -7,7 +7,7 @@ export default function configureOpenApi(app: AppOpenAPI) {
     openapi: "3.0.0",
     info: {
       version: packageJSON.version,
-      title: "Tasks API",
+      title: "Record Keeping API",
     },
   });
 
