@@ -4,7 +4,7 @@ import {
   selectLotsSchema,
   updateBlockSchema,
 } from "@/db/schema";
-import { notFoundSchema } from "@/lib/constants";
+import { bearerToken, notFoundSchema } from "@/lib/constants";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { auth } from "@/middlewares/auth";
 import { createRoute, z } from "@hono/zod-openapi";
@@ -28,6 +28,7 @@ export const getBlock = createRoute({
   method: "get",
   request: {
     params: IdParamsSchema,
+    headers: bearerToken,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(selectBlocksSchema, "Get Block"),
@@ -41,6 +42,7 @@ export const getBlockLots = createRoute({
   method: "get",
   request: {
     params: IdParamsSchema,
+    headers: bearerToken,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -61,6 +63,7 @@ export const getBlockLotsNotTaken = createRoute({
   method: "get",
   request: {
     params: IdParamsSchema,
+    headers: bearerToken,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -81,6 +84,7 @@ export const createBlock = createRoute({
   method: "post",
   request: {
     body: jsonContent(insertBlockSchema, "Create Block"),
+    headers: bearerToken,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -102,6 +106,7 @@ export const updateBlock = createRoute({
   request: {
     params: IdParamsSchema,
     body: jsonContentRequired(updateBlockSchema, "Block to update"),
+    headers: bearerToken,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(

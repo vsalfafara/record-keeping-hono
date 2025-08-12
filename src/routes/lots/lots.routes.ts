@@ -1,5 +1,5 @@
 import { insertLotSchema, updateLotSchema } from "@/db/schema";
-import { notFoundSchema } from "@/lib/constants";
+import { bearerToken, notFoundSchema } from "@/lib/constants";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { auth } from "@/middlewares/auth";
 import { createRoute } from "@hono/zod-openapi";
@@ -23,6 +23,7 @@ export const createLot = createRoute({
   method: "post",
   request: {
     body: jsonContentRequired(insertLotSchema, "Lot to update"),
+    headers: bearerToken,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -44,6 +45,7 @@ export const updateLot = createRoute({
   request: {
     params: IdParamsSchema,
     body: jsonContentRequired(updateLotSchema, "Lot to update"),
+    headers: bearerToken,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(

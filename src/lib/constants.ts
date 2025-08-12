@@ -1,6 +1,7 @@
 import { createMessageObjectSchema } from "stoker/openapi/schemas";
 import { HTTPStatusPhrases } from "./helpers";
 import { z } from "zod";
+import env from "../env-runtime";
 
 export const notFoundSchema = (message: string | null = null) => {
   return createMessageObjectSchema(message || HTTPStatusPhrases.NOT_FOUND);
@@ -13,9 +14,6 @@ export const origin = [
 ];
 
 export const bearerToken = z.object({
-  Authorization: z
-    .string()
-    .default(
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTQsImZpcnN0TmFtZSI6IlZvbiIsImxhc3ROYW1lIjoiQWxmYWZhcmEiLCJlbWFpbCI6InZvbkBleGFtcGxlLmNvbSIsInJvbGUiOiJBRE1JTiIsImhhc0xvZ2dlZEluT25jZSI6ZmFsc2UsImNyZWF0ZWRCeSI6IlZvbiIsImNyZWF0ZWRPbiI6IjIwMjUtMDQtMjciLCJkYXRlIjoiMjAyNS0wNC0yN1QxNDowNDoxNC45NzdaIn0.7OGjFKh4wJCLFlW0XizgAlYgqHxUTBABqfQdwsJT9V8"
-    ),
+  Accept: z.string().default("application/json"),
+  Authorization: z.string().default(`Bearer ${env.TEST_BEARER_TOKEN}`),
 });

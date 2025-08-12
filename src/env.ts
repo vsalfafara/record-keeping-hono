@@ -11,6 +11,7 @@ const EnvSchema = z.object({
   DATABASE_URL: z.string().url(),
   SCHEMA: z.string(),
   JWT_SECRET: z.string(),
+  TEST_BEARER_TOKEN: z.string().optional(),
 });
 
 export type Environment = z.infer<typeof EnvSchema>;

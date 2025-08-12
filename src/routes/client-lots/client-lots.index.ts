@@ -4,11 +4,6 @@ import * as routes from "./client-lots.routes";
 
 const router = createRouter()
   .openapi(routes.createDIWI, handlers.createDIWI)
-  .openapi(routes.getClientLot, handlers.getClientLot)
-  .openapi(routes.getClientLotPaymentPlan, handlers.getClientLotPaymentPlan)
-  .openapi(
-    routes.createClientLotPaymentPlan,
-    handlers.createClientLotPaymentPlan
-  );
+  .openapi(routes.getClientLot, handlers.getClientLot);
 
 export default router;

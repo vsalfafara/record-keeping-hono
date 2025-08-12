@@ -1,0 +1,1 @@
+ALTER TABLE "lots" RENAME COLUMN "lotType" TO "lot_type";

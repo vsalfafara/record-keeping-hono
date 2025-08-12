@@ -71,7 +71,7 @@ export const lots = t.pgTable("lots", {
   id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
   blockId: t.integer("block_id"),
   name: t.varchar("name").notNull(),
-  lotType: lotTypes().notNull(),
+  lotType: lotTypes("lot_type").notNull(),
   price: t.doublePrecision().notNull(),
   remarks: t.varchar(),
   taken: t.boolean().notNull().default(false),
@@ -173,7 +173,9 @@ export const invoices = t.pgTable("invoices", {
     .references(() => clientLots.id, { onDelete: "cascade" }),
   purpose: invoicePurposes().notNull(),
   payment: t.doublePrecision().notNull(),
-  modeOfPayment: modeOfPayments().notNull().default("Cash Payment"),
+  modeOfPayment: modeOfPayments("mode_of_payment")
+    .notNull()
+    .default("Cash Payment"),
   dateOfPayment: t.date("date_of_payment", { mode: "string" }).notNull(),
   receipt: t.varchar("receipt").notNull(),
   remarks: t.varchar("remarks"),
@@ -189,7 +191,9 @@ export const expenses = t.pgTable("expenses", {
     .references(() => clientLots.id, { onDelete: "cascade" }),
   purpose: expensesPurposes().notNull(),
   payment: t.doublePrecision().notNull(),
-  modeOfPayment: modeOfPayments().notNull().default("Cash Payment"),
+  modeOfPayment: modeOfPayments("mode_of_payment")
+    .notNull()
+    .default("Cash Payment"),
   dateOfPayment: t.date("date_of_payment", { mode: "string" }).notNull(),
   receipt: t.varchar("receipt").notNull(),
   remarks: t.varchar("remarks"),

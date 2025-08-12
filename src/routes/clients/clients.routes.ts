@@ -4,6 +4,7 @@ import {
   selectClientsSchema,
   updateClientSchema,
 } from "@/db/schema";
+import { bearerToken } from "@/lib/constants";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { auth } from "@/middlewares/auth";
 import { createRoute, z } from "@hono/zod-openapi";
@@ -25,6 +26,9 @@ export const getClients = createRoute({
   middleware: auth,
   path: "/clients",
   method: "get",
+  request: {
+    headers: bearerToken,
+  },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
       z.array(selectClientsSchema),
@@ -40,6 +44,7 @@ export const getClient = createRoute({
   method: "get",
   request: {
     params: IdParamsSchema,
+    headers: bearerToken,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(selectClientsSchema, "Get Client"),
@@ -57,6 +62,7 @@ export const getClientLots = createRoute({
   method: "get",
   request: {
     params: IdParamsSchema,
+    headers: bearerToken,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -73,6 +79,7 @@ export const createClient = createRoute({
   method: "post",
   request: {
     body: jsonContentRequired(insertClientSchema, "Create Client"),
+    headers: bearerToken,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -94,6 +101,7 @@ export const updateClient = createRoute({
   request: {
     params: IdParamsSchema,
     body: jsonContentRequired(updateClientSchema, "Client to update"),
+    headers: bearerToken,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
