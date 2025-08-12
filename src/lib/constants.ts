@@ -1,7 +1,7 @@
 import { createMessageObjectSchema } from "stoker/openapi/schemas";
 import { HTTPStatusPhrases } from "./helpers";
 import { z } from "zod";
-import env from "../env-runtime";
+// import env from "../env-runtime";
 
 export const notFoundSchema = (message: string | null = null) => {
   return createMessageObjectSchema(message || HTTPStatusPhrases.NOT_FOUND);
@@ -14,6 +14,16 @@ export const origin = [
 ];
 
 export const bearerToken = z.object({
-  Accept: z.string().default("application/json"),
-  Authorization: z.string().default(`Bearer ${env.TEST_BEARER_TOKEN}`),
+  Accept: z
+    .string()
+    .default("application/json")
+    .describe("The header for the datatype accepted by the API"),
+  "Content-Type": z
+    .string()
+    .default("application/json")
+    .describe("The header for the datatype of the returned resource"),
+  Authorization: z
+    .string()
+    .startsWith("Bearer ")
+    .describe("The header to access restricted API endpoints"),
 });
