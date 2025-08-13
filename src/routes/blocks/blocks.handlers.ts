@@ -17,11 +17,13 @@ export const getBlock: AppRouteHandler<GetBlockRoute> = async ({
   env,
 }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const block = await db.query.blocks.findFirst({
     where: eq(blocks.id, id),
   });
+
+  await dbClient.end();
 
   return json(block, HTTPStatusCodes.OK);
 };
@@ -32,11 +34,13 @@ export const getBlockLots: AppRouteHandler<GetBlockLotsRoute> = async ({
   env,
 }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const lotsList = await db.query.lots.findMany({
     where: eq(lots.blockId, id),
   });
+
+  await dbClient.end();
 
   return json(lotsList, HTTPStatusCodes.OK);
 };
@@ -45,11 +49,13 @@ export const getBlockLotsNotTaken: AppRouteHandler<
   GetBlockLotsNotTakenRoute
 > = async ({ json, req, env }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const lotsList = await db.query.lots.findMany({
     where: and(eq(lots.blockId, id), eq(lots.taken, false)),
   });
+
+  await dbClient.end();
 
   return json(lotsList, HTTPStatusCodes.OK);
 };
@@ -59,10 +65,12 @@ export const createBlock: AppRouteHandler<CreateBlockRoute> = async ({
   req,
   env,
 }) => {
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
   const body = req.valid("json");
+
   const [block] = await db.insert(blocks).values(body).returning();
 
+  await dbClient.end();
   return json(
     { message: `Block ${block.name} has been created` },
     HTTPStatusCodes.OK
@@ -75,7 +83,7 @@ export const updateBlock: AppRouteHandler<UpdateBlockRoute> = async ({
   env,
 }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
   const body = req.valid("json");
 
   const [block] = await db
@@ -83,6 +91,8 @@ export const updateBlock: AppRouteHandler<UpdateBlockRoute> = async ({
     .set(body)
     .where(eq(blocks.id, id))
     .returning();
+
+  await dbClient.end();
 
   if (!block) {
     return json({ message: `Block not found` }, HTTPStatusCodes.NOT_FOUND);

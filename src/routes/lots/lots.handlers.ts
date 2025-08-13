@@ -10,10 +10,12 @@ export const createLot: AppRouteHandler<CreateLotRoute> = async ({
   req,
   env,
 }) => {
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
   const body = req.valid("json");
 
   const [lot] = await db.insert(lots).values(body).returning();
+
+  await dbClient.end();
 
   return json(
     { message: `Lot ${lot.name} has been created` },
@@ -27,7 +29,7 @@ export const updateLot: AppRouteHandler<UpdateLotRoute> = async ({
   env,
 }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
   const body = req.valid("json");
 
   const [lot] = await db
@@ -35,6 +37,8 @@ export const updateLot: AppRouteHandler<UpdateLotRoute> = async ({
     .set(body)
     .where(eq(lots.id, id))
     .returning();
+
+  await dbClient.end();
 
   if (!lot) {
     return json(

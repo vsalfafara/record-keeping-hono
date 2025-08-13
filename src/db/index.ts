@@ -4,8 +4,8 @@ import * as schema from "./schema";
 import type { Environment } from "@/env";
 
 export function createDb(env: Environment) {
-  const client = postgres(env.DATABASE_URL, { prepare: false });
-  const db = drizzle(client, { schema });
+  const dbClient = postgres(env.DATABASE_URL, { prepare: false });
+  const db = drizzle(dbClient, { schema });
 
-  return { db, client };
+  return { db, dbClient };
 }

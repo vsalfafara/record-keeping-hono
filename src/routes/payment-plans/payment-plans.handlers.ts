@@ -14,7 +14,7 @@ export const getClientLotPaymentPlan: AppRouteHandler<
   GetClientLotPaymentPlan
 > = async ({ json, req, env }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const clientLotExists = await db.query.clientLots.findFirst({
     where: eq(clientLots.id, id),
@@ -31,6 +31,8 @@ export const getClientLotPaymentPlan: AppRouteHandler<
     where: eq(paymentPlans.clientLotId, id),
     orderBy: [asc(paymentPlans.dueDate)],
   });
+
+  await dbClient.end();
 
   return json(paymentPlan, HTTPStatusCodes.OK);
 };

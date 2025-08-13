@@ -17,7 +17,8 @@ export const getProperties: AppRouteHandler<GetPropertiesRoute> = async ({
   json,
   env,
 }) => {
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
+
   const properties = await db.query.properties.findMany({
     with: {
       blocks: {
@@ -27,6 +28,8 @@ export const getProperties: AppRouteHandler<GetPropertiesRoute> = async ({
       },
     },
   });
+
+  await dbClient.end();
 
   let totalAvailableLots = 0;
   let totalTakenLots = 0;
@@ -69,9 +72,11 @@ export const getProperties: AppRouteHandler<GetPropertiesRoute> = async ({
 export const getPropertiesList: AppRouteHandler<
   GetPropertiesListRoute
 > = async ({ json, env }) => {
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const properties = await db.query.properties.findMany();
+
+  await dbClient.end();
 
   return json(properties, HTTPStatusCodes.OK);
 };
@@ -82,7 +87,7 @@ export const getProperty: AppRouteHandler<GetPropertyRoute> = async ({
   env,
 }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   let property: any = await db.query.properties.findFirst({
     where: eq(properties.id, id),
@@ -97,6 +102,8 @@ export const getProperty: AppRouteHandler<GetPropertyRoute> = async ({
       lots: true,
     },
   });
+
+  await dbClient.end();
 
   const numberOfBlocks = blocksCount.length;
   let numberOfLots = 0;
@@ -130,7 +137,7 @@ export const getPropertyBlocks: AppRouteHandler<
   GetPropertyBlocksRoute
 > = async ({ json, req, env }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const propertyBlocks = await db.query.blocks.findMany({
     where: eq(blocks.propertyId, id),
@@ -142,6 +149,8 @@ export const getPropertyBlocks: AppRouteHandler<
       },
     },
   });
+
+  await dbClient.end();
 
   const stats = propertyBlocks.map((block) => {
     const { lots, ...blockInfo } = block;
@@ -167,11 +176,13 @@ export const getPropertyBlocksList: AppRouteHandler<
   GetPropertyBlocksListRoute
 > = async ({ json, req, env }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const blocksList = await db.query.blocks.findMany({
     where: eq(blocks.propertyId, id),
   });
+
+  await dbClient.end();
 
   return json(blocksList, HTTPStatusCodes.OK);
 };
@@ -181,10 +192,12 @@ export const createProperty: AppRouteHandler<CreatePropertyRoute> = async ({
   req,
   env,
 }) => {
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
   const body = req.valid("json");
 
   const [property] = await db.insert(properties).values(body).returning();
+
+  await dbClient.end();
 
   return json(
     { message: `Property ${property.name} has been created` },
@@ -198,7 +211,7 @@ export const updateProperty: AppRouteHandler<UpdatePropertyRoute> = async ({
   env,
 }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
   const body = req.valid("json");
 
   const [property] = await db
@@ -206,6 +219,8 @@ export const updateProperty: AppRouteHandler<UpdatePropertyRoute> = async ({
     .set(body)
     .where(eq(properties.id, id))
     .returning();
+
+  await dbClient.end();
 
   if (!property)
     return json({ message: "Property not found" }, HTTPStatusCodes.NOT_FOUND);

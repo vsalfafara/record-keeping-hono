@@ -6,12 +6,13 @@ import { config } from "dotenv";
 import { expand } from "dotenv-expand";
 import { cors } from "hono/cors";
 import { origin } from "@/lib/constants";
+import { createDb } from "@/db";
 
 expand(config());
 
 export default function configureMiddlewares(app: AppOpenAPI) {
-  app.use(async (c, next) => {
-    parseEnv(Object.assign(c.env || {}, process.env));
+  app.use(async ({ env }, next) => {
+    parseEnv(Object.assign(env || {}, process.env));
     return await next();
   });
   app.use(

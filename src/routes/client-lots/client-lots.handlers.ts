@@ -12,9 +12,11 @@ export const createDIWI: AppRouteHandler<CreateDIWIRoute> = async ({
   env,
 }) => {
   const body = req.valid("json");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const [clientLot] = await db.insert(clientLots).values(body).returning();
+
+  await dbClient.end();
 
   return json(
     {
@@ -31,7 +33,7 @@ export const getClientLot: AppRouteHandler<GetClientLotRoute> = async ({
   env,
 }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const clientLot = await db.query.clientLots.findFirst({
     where: eq(clientLots.id, id),
@@ -54,6 +56,8 @@ export const getClientLot: AppRouteHandler<GetClientLotRoute> = async ({
       },
     },
   });
+
+  await dbClient.end();
 
   if (!clientLot) {
     return json({ message: "Client lot not found" }, HTTPStatusCodes.NOT_FOUND);

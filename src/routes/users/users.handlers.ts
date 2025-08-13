@@ -15,7 +15,7 @@ export const getUsers: AppRouteHandler<GetUserRoute> = async ({
   json,
   env,
 }) => {
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
   const users = await db.query.users.findMany({
     columns: {
       password: false,
@@ -29,7 +29,7 @@ export const createUser: AppRouteHandler<CreateUserRoute> = async ({
   req,
   env,
 }) => {
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
   const body = req.valid("json");
   const userExists = await db.query.users.findFirst({
     where: eq(users.email, body.email),
@@ -46,6 +46,8 @@ export const createUser: AppRouteHandler<CreateUserRoute> = async ({
 
   const [user] = await db.insert(users).values(body).returning();
 
+  await dbClient.end();
+
   return json(
     {
       message: `User ${user.firstName} ${user.lastName} has been created`,
@@ -60,7 +62,7 @@ export const updateUser: AppRouteHandler<UpdateUserRoute> = async ({
   env,
 }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
   const userToUpdated = req.valid("json");
 
   if (userToUpdated.password) {
@@ -73,6 +75,8 @@ export const updateUser: AppRouteHandler<UpdateUserRoute> = async ({
     .set(userToUpdated)
     .where(eq(users.id, id))
     .returning();
+
+  await dbClient.end();
 
   if (!user) {
     return json({ message: "User not found" }, HTTPStatusCodes.NOT_FOUND);
@@ -89,9 +93,11 @@ export const deleteUser: AppRouteHandler<DeleteUserRoute> = async ({
   env,
 }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const [user] = await db.delete(users).where(eq(users.id, id)).returning();
+
+  await dbClient.end();
 
   if (!user) {
     return json({ message: "User not found" }, HTTPStatusCodes.NOT_FOUND);

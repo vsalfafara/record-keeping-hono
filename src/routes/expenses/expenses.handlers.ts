@@ -12,7 +12,7 @@ export const getClientLotExpenses: AppRouteHandler<
   GetClientLotExpensesRoute
 > = async ({ json, req, env }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const clientLotExists = await db.query.clientLots.findFirst({
     where: eq(clientLots.id, id),
@@ -29,6 +29,8 @@ export const getClientLotExpenses: AppRouteHandler<
     where: eq(expenses.clientLotId, id),
   });
 
+  await dbClient.end();
+
   return json(clientLotExpenses, HTTPStatusCodes.OK);
 };
 
@@ -37,7 +39,7 @@ export const createClientLotInvoice: AppRouteHandler<
 > = async ({ json, req, env }) => {
   const { id } = req.valid("param");
   const body = req.valid("json");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const clientLotExists = await db.query.clientLots.findFirst({
     where: eq(clientLots.id, id),
@@ -51,6 +53,8 @@ export const createClientLotInvoice: AppRouteHandler<
   }
 
   await db.insert(expenses).values(body);
+
+  await dbClient.end();
 
   return json({ message: "Expense has been created" }, HTTPStatusCodes.OK);
 };

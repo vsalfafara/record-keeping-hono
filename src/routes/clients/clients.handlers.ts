@@ -8,16 +8,18 @@ import {
 } from "./clients.routes";
 import { createDb } from "@/db";
 import { HTTPStatusCodes } from "@/lib/helpers";
-import { clientLots, clients, properties } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { clientLots, clients } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export const getClients: AppRouteHandler<GetClientsRoute> = async ({
   json,
   env,
 }) => {
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const clients = await db.query.clients.findMany();
+
+  await dbClient.end();
 
   return json(clients, HTTPStatusCodes.OK);
 };
@@ -28,11 +30,13 @@ export const getClient: AppRouteHandler<GetClientRoute> = async ({
   env,
 }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const client = await db.query.clients.findFirst({
     where: eq(clients.id, id),
   });
+
+  await dbClient.end();
 
   if (!client) {
     return json({ message: "Client not found" }, HTTPStatusCodes.NOT_FOUND);
@@ -47,7 +51,7 @@ export const getClientLots: AppRouteHandler<GetClientLotsRoute> = async ({
   env,
 }) => {
   const { id } = req.valid("param");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const clientLotsList = await db.query.clientLots.findMany({
     where: eq(clientLots.clientId, id),
@@ -74,6 +78,8 @@ export const getClientLots: AppRouteHandler<GetClientLotsRoute> = async ({
     },
   });
 
+  await dbClient.end();
+
   return json(clientLotsList, HTTPStatusCodes.OK);
 };
 
@@ -83,9 +89,11 @@ export const createClient: AppRouteHandler<CreateClientRoute> = async ({
   env,
 }) => {
   const body = req.valid("json");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const [client] = await db.insert(clients).values(body).returning();
+
+  await dbClient.end();
 
   return json(
     {
@@ -102,13 +110,15 @@ export const updateClient: AppRouteHandler<UpdateClientRoute> = async ({
 }) => {
   const { id } = req.valid("param");
   const body = req.valid("json");
-  const { db } = createDb(env);
+  const { db, dbClient } = createDb(env);
 
   const [client] = await db
     .update(clients)
     .set(body)
     .where(eq(clients.id, id))
     .returning();
+
+  await dbClient.end();
 
   if (!client) {
     return json({ message: "Client not found" }, HTTPStatusCodes.NOT_FOUND);
