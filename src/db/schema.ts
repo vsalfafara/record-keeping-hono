@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import * as t from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -484,6 +484,25 @@ export const insertPaymentPlansSchema = createInsertSchema(paymentPlans, {
     penalty: true,
     paid: true,
   });
+
+export const selectExpensesSchema = createSelectSchema(expenses);
+
+export const insertExpensesSchema = createInsertSchema(expenses, {
+  clientLotId: z.number(),
+  purpose: z.enum(["Agent Incentive", "Contractor"]),
+  payment: z.number().multipleOf(0.01),
+  modeOfPayment: z.enum(["Bank Transfer", "Cash Payment", "Check Payment"]),
+  dateOfPayment: z.string(),
+  receipt: z.string(),
+  remarks: z.string().optional(),
+}).required({
+  clientLotId: true,
+  purpose: true,
+  payment: true,
+  modeOfPayment: true,
+  dateOfPayment: true,
+  receipt: true,
+});
 
 // function timestamps() {
 //   return {

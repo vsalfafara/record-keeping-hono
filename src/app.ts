@@ -11,6 +11,7 @@ import clients from "@/routes/clients/clients.index";
 import clientLots from "@/routes/client-lots/client-lots.index";
 import invoices from "@/routes/invoices/invoices.index";
 import paymentPlans from "@/routes/payment-plans/payment-plans.index";
+import expenses from "@/routes/expenses/expenses.index";
 
 const app = createApp();
 
@@ -24,6 +25,7 @@ const routes = [
   clientLots,
   invoices,
   paymentPlans,
+  expenses,
 ];
 
 configureOpenApi(app);
