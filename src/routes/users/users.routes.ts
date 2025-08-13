@@ -3,7 +3,7 @@ import {
   selectUsersSchema,
   updateUserSchema,
 } from "@/db/schema";
-import { bearerToken, notFoundSchema } from "@/lib/constants";
+import { headers, notFoundSchema } from "@/lib/constants";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { auth } from "@/middlewares/auth";
 import { createRoute, z } from "@hono/zod-openapi";
@@ -26,7 +26,7 @@ export const getUsers = createRoute({
   path: "/users",
   method: "get",
   request: {
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(z.array(selectUsersSchema), "Get Users"),
@@ -40,7 +40,7 @@ export const createUser = createRoute({
   method: "post",
   request: {
     body: jsonContentRequired(insertUserSchema, "Create user"),
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -62,7 +62,7 @@ export const updateUser = createRoute({
   request: {
     params: IdParamsSchema,
     body: jsonContentRequired(updateUserSchema, "Update user"),
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -87,7 +87,7 @@ export const deleteUser = createRoute({
   method: "delete",
   request: {
     params: IdParamsSchema,
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(

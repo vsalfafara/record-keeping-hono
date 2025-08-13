@@ -1,5 +1,5 @@
 import { insertDIWISchema, selectClientLotsSchema } from "@/db/schema";
-import { bearerToken } from "@/lib/constants";
+import { headers } from "@/lib/constants";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { auth } from "@/middlewares/auth";
 import { createRoute, z } from "@hono/zod-openapi";
@@ -19,7 +19,7 @@ export const createDIWI = createRoute({
   method: "post",
   request: {
     body: jsonContentRequired(insertDIWISchema, "DIWI to Create"),
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -43,7 +43,7 @@ export const getClientLot = createRoute({
   method: "get",
   request: {
     params: IdParamsSchema,
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(

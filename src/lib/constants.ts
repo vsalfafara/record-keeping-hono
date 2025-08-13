@@ -13,7 +13,7 @@ export const origin = [
   "https://record-keeping-vue-dev.onrender.com",
 ];
 
-export const bearerToken = z.object({
+export const headers = z.object({
   Accept: z
     .string()
     .default("application/json")

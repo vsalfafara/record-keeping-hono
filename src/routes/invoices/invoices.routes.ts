@@ -1,5 +1,5 @@
 import { insertInvoiceSchema, selectInvoicesSchema } from "@/db/schema";
-import { bearerToken } from "@/lib/constants";
+import { headers } from "@/lib/constants";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { auth } from "@/middlewares/auth";
 import { createRoute, z } from "@hono/zod-openapi";
@@ -23,7 +23,7 @@ export const getClientLotInvoices = createRoute({
   method: "get",
   request: {
     params: IdParamsSchema,
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -49,7 +49,7 @@ export const createClientLotInvoice = createRoute({
   request: {
     params: IdParamsSchema,
     body: jsonContentRequired(insertInvoiceSchema, "Invoice to create"),
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(

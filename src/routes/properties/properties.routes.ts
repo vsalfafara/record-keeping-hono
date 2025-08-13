@@ -6,7 +6,7 @@ import {
   updatePropertySchema,
   selectPropertyListSchema,
 } from "@/db/schema";
-import { bearerToken, notFoundSchema } from "@/lib/constants";
+import { headers, notFoundSchema } from "@/lib/constants";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { auth } from "@/middlewares/auth";
 import { createRoute, z } from "@hono/zod-openapi";
@@ -29,7 +29,7 @@ export const getProperties = createRoute({
   path: "/properties",
   method: "get",
   request: {
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(selectPropertiesSchema, "Get Properties"),
@@ -42,7 +42,7 @@ export const getPropertiesList = createRoute({
   path: "/properties/list",
   method: "get",
   request: {
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -59,7 +59,7 @@ export const createProperty = createRoute({
   method: "post",
   request: {
     body: jsonContentRequired(insertPropertySchema, "Create Property"),
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -76,7 +76,7 @@ export const getProperty = createRoute({
   method: "get",
   request: {
     params: IdParamsSchema,
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(selectPropertySchema, "Get Property"),
@@ -94,7 +94,7 @@ export const getPropertyBlocks = createRoute({
   method: "get",
   request: {
     params: IdParamsSchema,
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -121,7 +121,7 @@ export const getPropertyBlocksList = createRoute({
   method: "get",
   request: {
     params: IdParamsSchema,
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -143,7 +143,7 @@ export const updateProperty = createRoute({
   request: {
     params: IdParamsSchema,
     body: jsonContentRequired(updatePropertySchema, "Updated Property"),
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(

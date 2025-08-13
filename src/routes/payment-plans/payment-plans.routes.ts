@@ -3,7 +3,7 @@ import {
   selectPaymentPlansSchema,
   updatePaymentPlanSchema,
 } from "@/db/schema";
-import { bearerToken } from "@/lib/constants";
+import { headers } from "@/lib/constants";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { auth } from "@/middlewares/auth";
 import { createRoute, z } from "@hono/zod-openapi";
@@ -27,7 +27,7 @@ export const getClientLotPaymentPlan = createRoute({
   method: "get",
   request: {
     params: IdParamsSchema,
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -56,7 +56,7 @@ export const createClientLotPaymentPlan = createRoute({
       insertPaymentPlansSchema,
       "Payment Plans to Create"
     ),
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
@@ -92,7 +92,7 @@ export const updatePaymentPlan = createRoute({
       updatePaymentPlanSchema,
       "Payment Plan to update"
     ),
-    headers: bearerToken,
+    headers,
   },
   responses: {
     [HTTPStatusCodes.OK]: jsonContent(
