@@ -2,6 +2,7 @@ import { AppRouteHandler } from "@/lib/types";
 import {
   CreateClientLotPaymentPlanRoute,
   GetClientLotPaymentPlan,
+  UpdatePaymentPlanRoute,
 } from "./payment-plans.routes";
 import { createDb } from "@/db";
 import { clientLots, paymentPlans } from "@/db/schema";
@@ -88,4 +89,27 @@ export const createClientLotPaymentPlan: AppRouteHandler<
   await db.insert(paymentPlans).values(paymentPlanRecords);
 
   return json({ message: "Payment Plan records created" }, HTTPStatusCodes.OK);
+};
+
+export const updatePaymentPlan: AppRouteHandler<
+  UpdatePaymentPlanRoute
+> = async ({ json, req, env }) => {
+  const { id } = req.valid("param");
+  const body = req.valid("json");
+  const { db } = createDb(env);
+
+  const [updatedPaymentPlan] = await db
+    .update(paymentPlans)
+    .set(body)
+    .where(eq(paymentPlans.id, id))
+    .returning();
+
+  if (!updatedPaymentPlan) {
+    return json(
+      { message: "Payment Plan does not exist" },
+      HTTPStatusCodes.NOT_FOUND
+    );
+  }
+
+  return json({ message: "Payment Plan has been updated" }, HTTPStatusCodes.OK);
 };

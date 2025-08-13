@@ -1,10 +1,10 @@
 import { AppRouteHandler } from "@/lib/types";
 import {
   GetClientLotExpensesRoute,
-  CreateClientLotExpensRoute,
+  CreateClientLotExpenseRoute,
 } from "./expenses.routes";
 import { createDb } from "@/db";
-import { clientLots, expenses, invoices } from "@/db/schema";
+import { clientLots, expenses } from "@/db/schema";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { eq } from "drizzle-orm";
 
@@ -33,7 +33,7 @@ export const getClientLotExpenses: AppRouteHandler<
 };
 
 export const createClientLotInvoice: AppRouteHandler<
-  CreateClientLotExpensRoute
+  CreateClientLotExpenseRoute
 > = async ({ json, req, env }) => {
   const { id } = req.valid("param");
   const body = req.valid("json");

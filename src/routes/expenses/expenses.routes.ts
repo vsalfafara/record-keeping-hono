@@ -71,4 +71,4 @@ export const createClientLotExpense = createRoute({
 });
 
 export type GetClientLotExpensesRoute = typeof getClientLotExpenses;
-export type CreateClientLotExpensRoute = typeof createClientLotExpense;
+export type CreateClientLotExpenseRoute = typeof createClientLotExpense;

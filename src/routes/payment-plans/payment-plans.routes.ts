@@ -1,6 +1,7 @@
 import {
   insertPaymentPlansSchema,
   selectPaymentPlansSchema,
+  updatePaymentPlanSchema,
 } from "@/db/schema";
 import { bearerToken } from "@/lib/constants";
 import { HTTPStatusCodes } from "@/lib/helpers";
@@ -80,5 +81,35 @@ export const createClientLotPaymentPlan = createRoute({
   },
 });
 
+export const updatePaymentPlan = createRoute({
+  tags,
+  middleware: auth,
+  path: "/payment-plan/{id}",
+  method: "put",
+  request: {
+    params: IdParamsSchema,
+    body: jsonContentRequired(
+      updatePaymentPlanSchema,
+      "Payment Plan to update"
+    ),
+    headers: bearerToken,
+  },
+  responses: {
+    [HTTPStatusCodes.OK]: jsonContent(
+      createMessageObjectSchema("Payment Plan updated"),
+      "Payment Plan updated"
+    ),
+    [HTTPStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(IdParamsSchema),
+      "Validation Error"
+    ),
+    [HTTPStatusCodes.NOT_FOUND]: jsonContent(
+      createMessageObjectSchema("Payment Plan does not exist"),
+      "Payment Plan does not exist"
+    ),
+  },
+});
+
 export type GetClientLotPaymentPlan = typeof getClientLotPaymentPlan;
 export type CreateClientLotPaymentPlanRoute = typeof createClientLotPaymentPlan;
+export type UpdatePaymentPlanRoute = typeof updatePaymentPlan;

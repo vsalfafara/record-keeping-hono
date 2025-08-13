@@ -481,9 +481,28 @@ export const insertPaymentPlansSchema = createInsertSchema(paymentPlans, {
   .omit({
     clientLotId: true,
     dueDate: true,
+    discount: true,
     penalty: true,
     paid: true,
   });
+
+export const updatePaymentPlanSchema = createInsertSchema(paymentPlans, {
+  discount: z.number().multipleOf(0.01),
+  penalty: z.number().multipleOf(0.01),
+})
+  .required({
+    discount: true,
+    penalty: true,
+  })
+  .omit({
+    clientLotId: true,
+    status: true,
+    installmentMonths: true,
+    dueDate: true,
+    paymentDue: true,
+    paid: true,
+  })
+  .partial();
 
 export const selectExpensesSchema = createSelectSchema(expenses);
 
