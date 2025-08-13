@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "deploy": "wrangler deploy --minify",
+    "wrangler:deploy": "wrangler deploy --minify",
     "dev:wrangler": "wrangler dev",
     "dev:db": "turso dev --db-file dev.db",
     "start": "node ./dist/src/index.js",
