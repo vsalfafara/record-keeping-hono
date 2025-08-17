@@ -1,4 +1,4 @@
-import { insertDIWISchema, selectClientLotsSchema } from "@/db/schema";
+import { insertClientLotSchema, selectClientLotsSchema } from "@/db/schema";
 import { headers } from "@/lib/constants";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { auth } from "@/middlewares/auth";
@@ -12,13 +12,13 @@ import {
 
 const tags = ["Client Lots"];
 
-export const createDIWI = createRoute({
+export const createClientLot = createRoute({
   tags,
   middleware: auth,
-  path: "/client-lots/diwi",
+  path: "/client-lots",
   method: "post",
   request: {
-    body: jsonContentRequired(insertDIWISchema, "DIWI to Create"),
+    body: jsonContentRequired(insertClientLotSchema, "Client Lot to Create"),
     headers,
   },
   responses: {
@@ -30,7 +30,7 @@ export const createDIWI = createRoute({
       "Created Client Lot"
     ),
     [HTTPStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
-      createErrorSchema(insertDIWISchema),
+      createErrorSchema(insertClientLotSchema),
       "Validation Error"
     ),
   },
@@ -65,5 +65,5 @@ export const getClientLot = createRoute({
   },
 });
 
-export type CreateDIWIRoute = typeof createDIWI;
+export type CreateClientLotRoute = typeof createClientLot;
 export type GetClientLotRoute = typeof getClientLot;

@@ -1,12 +1,11 @@
 import { AppRouteHandler } from "@/lib/types";
-import { CreateDIWIRoute, GetClientLotRoute } from "./client-lots.routes";
+import { CreateClientLotRoute, GetClientLotRoute } from "./client-lots.routes";
 import { createDb } from "@/db";
-import { clientLots, paymentPlans, properties } from "@/db/schema";
+import { clientLots } from "@/db/schema";
 import { HTTPStatusCodes } from "@/lib/helpers";
-import { asc, eq } from "drizzle-orm";
-import { format } from "date-fns";
+import { eq } from "drizzle-orm";
 
-export const createDIWI: AppRouteHandler<CreateDIWIRoute> = async ({
+export const createClientLot: AppRouteHandler<CreateClientLotRoute> = async ({
   json,
   req,
   env,

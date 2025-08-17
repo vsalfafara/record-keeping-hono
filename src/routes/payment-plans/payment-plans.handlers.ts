@@ -41,8 +41,13 @@ export const createClientLotPaymentPlan: AppRouteHandler<
   CreateClientLotPaymentPlanRoute
 > = async ({ json, req, env }) => {
   const { id } = req.valid("param");
-  const { installmentMonths, dateOfPayment, paymentDue, withInterest } =
-    req.valid("json");
+  const {
+    installmentMonths,
+    dateOfPayment,
+    paymentDue,
+    withDiscountedLastTerm,
+    installmentOnly,
+  } = req.valid("json");
   const { db } = createDb(env);
 
   const clientLotExists = await db.query.clientLots.findFirst({
@@ -68,6 +73,7 @@ export const createClientLotPaymentPlan: AppRouteHandler<
   }
 
   const date = new Date(dateOfPayment);
+  const now = new Date();
   const paymentPlanRecords = [];
 
   for (let x = 0; x < installmentMonths; x++) {
@@ -77,11 +83,25 @@ export const createClientLotPaymentPlan: AppRouteHandler<
       0
     );
     let discountedPaymentDue = paymentDue;
-    if (!withInterest && x + 1 === installmentMonths) {
-      discountedPaymentDue = discountedPaymentDue - discountedPaymentDue * 0.05;
+    if (withDiscountedLastTerm && x + 1 === installmentMonths) {
+      discountedPaymentDue =
+        Math.round((discountedPaymentDue - discountedPaymentDue * 0.05) * 100) /
+        100;
     }
+
+    let status;
+
+    if (now.getTime() > installmentMonthsString.getTime()) status = "Overdue";
+    else status = "Pending";
+
+    if (installmentOnly && x === 0) status = "Paid";
+
     paymentPlanRecords.push({
       clientLotId: id,
+      status,
+      date: installmentMonthsString.getTime(),
+      now: now.getTime(),
+      overdue: now.getTime() > installmentMonthsString.getTime(),
       installmentMonths: `${x + 1}/${installmentMonths}`,
       dueDate: format(installmentMonthsString, "yyyy-MM-dd"),
       paymentDue: discountedPaymentDue,

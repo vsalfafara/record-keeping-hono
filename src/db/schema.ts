@@ -403,23 +403,7 @@ export const updateClientSchema = insertClientSchema.partial().omit({
 
 export const selectClientLotsSchema = createSelectSchema(clientLots);
 
-export const insertDIWISchema = createInsertSchema(clientLots, {
-  clientId: z.number(),
-  propertyId: z.number(),
-  blockId: z.number(),
-  lotId: z.number(),
-  paymentType: z.literal("Monthly Terms"),
-  paymentPlan: z.literal("Downpayment and Installment (with interest)"),
-  terms: z.number().multipleOf(0.01),
-  downpayment: z.string(),
-  downpaymentPrice: z.number().multipleOf(0.01),
-  monthsToPay: z.number(),
-  monthly: z.number().multipleOf(0.01),
-  actualPrice: z.number().multipleOf(0.01),
-  discount: z.number().multipleOf(0.01).optional(),
-  balance: z.number().multipleOf(0.01),
-  agent: z.string().optional(),
-})
+const baseInsertClientLotSchema = createInsertSchema(clientLots)
   .required({
     clientId: true,
     propertyId: true,
@@ -435,6 +419,93 @@ export const insertDIWISchema = createInsertSchema(clientLots, {
   .omit({
     inNeed: true,
   });
+
+const reservationSchema = z.object({
+  paymentType: z.literal("Reservation"),
+  reservation: z.number(),
+  discount: z
+    .number({ message: "Please enter an amount" })
+    .min(0)
+    .multipleOf(0.01)
+    .optional()
+    .or(z.literal(0))
+    .optional(),
+  actualPrice: z.number().multipleOf(0.01).optional(),
+});
+
+const monthlyTermsSchema = z.object({
+  paymentType: z.literal("Monthly Terms"),
+  paymentPlan: z.enum([
+    "Downpayment and Installment (with interest)",
+    "Downpayment and Installment (without interest)",
+    "Installment only (with interest)",
+  ]),
+  monthly: z.number().multipleOf(0.01).default(0),
+});
+
+const downpaymentAndInstallmentWithInterestSchema = z.object({
+  paymentPlan: z.literal("Downpayment and Installment (with interest)"),
+  downpayment: z.string(),
+  downpaymentPrice: z.number().multipleOf(0.01).min(1),
+  terms: z.number(),
+  totalInterest: z.number().multipleOf(0.01),
+  monthly: z.number().multipleOf(0.01),
+});
+
+const downpaymentAndInstallmentWithoutInterestSchema = z.object({
+  paymentPlan: z.literal("Downpayment and Installment (without interest)"),
+  downpayment: z.string(),
+  downpaymentPrice: z.number().multipleOf(0.01).min(1),
+  terms: z.number(),
+});
+
+const installmentOnlySchema = z.object({
+  paymentPlan: z.literal("Installment only (with interest)"),
+  downpayment: z.string().optional(),
+  downpaymentPrice: z.number().multipleOf(0.01).optional(),
+  terms: z.number(),
+});
+
+const monthlyTermsFormSchema = z
+  .discriminatedUnion("paymentPlan", [
+    downpaymentAndInstallmentWithInterestSchema,
+    downpaymentAndInstallmentWithoutInterestSchema,
+    installmentOnlySchema,
+  ])
+  .and(baseInsertClientLotSchema);
+
+const fullPaymentSchema = z.object({
+  paymentType: z.literal("Full Payment"),
+  inNeed: z.enum(["Yes", "No"]),
+});
+
+const inNeedSchema = z.object({
+  inNeed: z.literal("Yes"),
+  inNeedPrice: z.string({ message: "Please select an option" }),
+});
+
+const notInNeedSchema = z.object({
+  inNeed: z.literal("No"),
+  inNeedPrice: z.string({ message: "Please select an option" }).optional(),
+});
+
+const inNeedFormSchema = z
+  .discriminatedUnion("inNeed", [inNeedSchema, notInNeedSchema])
+  .and(baseInsertClientLotSchema);
+
+const paymentTypeFormSchema = z
+  .discriminatedUnion("paymentType", [
+    reservationSchema,
+    monthlyTermsSchema,
+    fullPaymentSchema,
+  ])
+  .and(baseInsertClientLotSchema);
+
+export const insertClientLotSchema = z.union([
+  paymentTypeFormSchema,
+  monthlyTermsFormSchema,
+  inNeedFormSchema,
+]);
 
 export const selectInvoicesSchema = createSelectSchema(invoices);
 
@@ -470,13 +541,14 @@ export const insertPaymentPlansSchema = createInsertSchema(paymentPlans, {
 })
   .extend({
     dateOfPayment: z.string(),
-    withInterest: z.boolean(),
+    withDiscountedLastTerm: z.boolean(),
+    installmentOnly: z.boolean(),
   })
   .required({
     installmentMonths: true,
     paymentDue: true,
     dateOfPayment: true,
-    withInterest: true,
+    withDiscountedLastTerm: true,
   })
   .omit({
     clientLotId: true,
