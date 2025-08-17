@@ -372,7 +372,6 @@ export const insertLotSchema = createInsertSchema(lots, {
 
 export const updateLotSchema = insertLotSchema.partial().omit({
   blockId: true,
-  taken: true,
   createdBy: true,
   createdOn: true,
 });
