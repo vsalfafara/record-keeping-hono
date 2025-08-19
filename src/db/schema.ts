@@ -478,20 +478,6 @@ const fullPaymentSchema = z.object({
   inNeed: z.enum(["Yes", "No"]),
 });
 
-const inNeedSchema = z.object({
-  inNeed: z.literal("Yes"),
-  inNeedPrice: z.string({ message: "Please select an option" }),
-});
-
-const notInNeedSchema = z.object({
-  inNeed: z.literal("No"),
-  inNeedPrice: z.string({ message: "Please select an option" }).optional(),
-});
-
-const inNeedFormSchema = z
-  .discriminatedUnion("inNeed", [inNeedSchema, notInNeedSchema])
-  .and(baseInsertClientLotSchema);
-
 const paymentTypeFormSchema = z
   .discriminatedUnion("paymentType", [
     reservationSchema,
@@ -503,7 +489,6 @@ const paymentTypeFormSchema = z
 export const insertClientLotSchema = z.union([
   paymentTypeFormSchema,
   monthlyTermsFormSchema,
-  inNeedFormSchema,
 ]);
 
 export const selectInvoicesSchema = createSelectSchema(invoices);
