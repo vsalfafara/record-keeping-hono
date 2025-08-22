@@ -59,8 +59,8 @@ export const getClientLot = createRoute({
       "Validation Error"
     ),
     [HTTPStatusCodes.NOT_FOUND]: jsonContent(
-      createMessageObjectSchema("Client lot not found"),
-      "Client lot not found"
+      createMessageObjectSchema("Client lot does not exist"),
+      "Client lot does not exist"
     ),
   },
 });

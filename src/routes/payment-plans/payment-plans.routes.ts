@@ -39,8 +39,8 @@ export const getClientLotPaymentPlan = createRoute({
       "Validation Error"
     ),
     [HTTPStatusCodes.NOT_FOUND]: jsonContent(
-      createMessageObjectSchema("Client lot not found"),
-      "Client lot not found"
+      createMessageObjectSchema("Client lot does not exist"),
+      "Client lot does not exist"
     ),
   },
 });
@@ -75,8 +75,8 @@ export const createClientLotPaymentPlan = createRoute({
       "Client lot already has payment plan records"
     ),
     [HTTPStatusCodes.NOT_FOUND]: jsonContent(
-      createMessageObjectSchema("Client lot not found"),
-      "Client lot not found"
+      createMessageObjectSchema("Client lot does not exist"),
+      "Client lot does not exist"
     ),
   },
 });

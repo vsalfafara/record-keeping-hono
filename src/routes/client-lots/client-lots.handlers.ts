@@ -59,7 +59,10 @@ export const getClientLot: AppRouteHandler<GetClientLotRoute> = async ({
   await dbClient.end();
 
   if (!clientLot) {
-    return json({ message: "Client lot not found" }, HTTPStatusCodes.NOT_FOUND);
+    return json(
+      { message: "Client lot does not exist" },
+      HTTPStatusCodes.NOT_FOUND
+    );
   }
 
   return json(clientLot, HTTPStatusCodes.OK);

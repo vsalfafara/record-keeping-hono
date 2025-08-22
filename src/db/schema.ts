@@ -123,13 +123,11 @@ export const paymentPlans = t.pgTable("payment_plans", {
     .integer("client_lot_id")
     .notNull()
     .references(() => clientLots.id, { onDelete: "cascade" }),
-  status: t.varchar("status").default("Pending"),
   installmentMonths: t.varchar("installment_months"),
   dueDate: t.date("due_date", { mode: "string" }).notNull(),
   discount: t.doublePrecision("discount").notNull().default(0),
   penalty: t.doublePrecision("penalty").notNull().default(0),
   paymentDue: t.doublePrecision("payment_due").notNull(),
-  paid: t.doublePrecision("paid").default(0),
 });
 
 export const interments = t.pgTable("interments", {
@@ -539,26 +537,17 @@ export const insertPaymentPlansSchema = createInsertSchema(paymentPlans, {
     dueDate: true,
     discount: true,
     penalty: true,
-    paid: true,
   });
 
 export const updatePaymentPlanSchema = createInsertSchema(paymentPlans, {
-  discount: z.number().multipleOf(0.01),
-  penalty: z.number().multipleOf(0.01),
-})
-  .required({
-    discount: true,
-    penalty: true,
-  })
-  .omit({
-    clientLotId: true,
-    status: true,
-    installmentMonths: true,
-    dueDate: true,
-    paymentDue: true,
-    paid: true,
-  })
-  .partial();
+  discount: z.number().multipleOf(0.01).default(0),
+  penalty: z.number().multipleOf(0.01).default(0),
+}).omit({
+  clientLotId: true,
+  installmentMonths: true,
+  dueDate: true,
+  paymentDue: true,
+});
 
 export const selectExpensesSchema = createSelectSchema(expenses);
 
@@ -578,6 +567,29 @@ export const insertExpensesSchema = createInsertSchema(expenses, {
   dateOfPayment: true,
   receipt: true,
 });
+
+export const selectIntermentsSchema = createSelectSchema(interments);
+
+export const updateIntermentSchema = createInsertSchema(interments, {
+  type: z.enum(["Flesh", "Bone"]).optional(),
+  deceasedName: z.string().optional(),
+  deceasedBorn: z.string().optional(),
+  deceasedDied: z.string().optional(),
+  remainsName: z.string().optional(),
+  remainsBorn: z.string().optional(),
+  remainsDied: z.string().optional(),
+  intermentDate: z.string().optional(),
+  intermentTime: z.string().optional(),
+  contractorName: z.string().optional(),
+  contractorMobileNumber: z.string().optional(),
+  lastModifiedBy: z.string().optional(),
+})
+  .partial()
+  .omit({
+    clientLotId: true,
+    dig: true,
+    lastModifiedAt: true,
+  });
 
 // function timestamps() {
 //   return {

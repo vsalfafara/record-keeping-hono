@@ -5,8 +5,8 @@ import {
   UpdatePaymentPlanRoute,
 } from "./payment-plans.routes";
 import { createDb } from "@/db";
-import { clientLots, paymentPlans } from "@/db/schema";
-import { asc, eq } from "drizzle-orm";
+import { clientLots, invoices, paymentPlans } from "@/db/schema";
+import { and, asc, eq } from "drizzle-orm";
 import { HTTPStatusCodes } from "@/lib/helpers";
 import { format } from "date-fns";
 
@@ -32,9 +32,54 @@ export const getClientLotPaymentPlan: AppRouteHandler<
     orderBy: [asc(paymentPlans.dueDate)],
   });
 
+  let paymentPlanRows;
+
+  if (paymentPlan.length) {
+    const paymentPlanInvoices = await db.query.invoices.findMany({
+      where: and(
+        eq(invoices.clientLotId, id),
+        eq(invoices.purpose, "Payment Plan")
+      ),
+    });
+
+    let totalPaid = paymentPlanInvoices.reduce(
+      (currentValue, invoice) => currentValue + invoice.payment,
+      0
+    );
+
+    const currentDate = new Date();
+
+    paymentPlanRows = paymentPlan.map((data) => {
+      const balance = (totalPaid -= data.paymentDue);
+      const dueDate = new Date(data.dueDate);
+      let status = "Pending";
+      let paid = 0;
+
+      if (dueDate < currentDate) status = "Overdue";
+
+      if (balance >= 0) {
+        status = "Paid";
+        paid = data.paymentDue;
+      } else {
+        paid = Number(
+          (balance + data.paymentDue > 0
+            ? balance + data.paymentDue
+            : 0
+          ).toFixed(2)
+        );
+      }
+
+      return {
+        status,
+        paid,
+        ...data,
+      };
+    });
+  }
+
   await dbClient.end();
 
-  return json(paymentPlan, HTTPStatusCodes.OK);
+  return json(paymentPlanRows, HTTPStatusCodes.OK);
 };
 
 export const createClientLotPaymentPlan: AppRouteHandler<
@@ -120,18 +165,28 @@ export const updatePaymentPlan: AppRouteHandler<
   const body = req.valid("json");
   const { db } = createDb(env);
 
-  const [updatedPaymentPlan] = await db
-    .update(paymentPlans)
-    .set(body)
-    .where(eq(paymentPlans.id, id))
-    .returning();
+  const paymentPlan = await db.query.paymentPlans.findFirst({
+    where: eq(paymentPlans.id, id),
+  });
 
-  if (!updatedPaymentPlan) {
+  if (!paymentPlan) {
     return json(
       { message: "Payment Plan does not exist" },
       HTTPStatusCodes.NOT_FOUND
     );
   }
+
+  paymentPlan.paymentDue -= body.discount - paymentPlan.discount;
+  paymentPlan.paymentDue += body.penalty - paymentPlan.penalty;
+
+  await db
+    .update(paymentPlans)
+    .set({
+      ...body,
+      paymentDue: paymentPlan.paymentDue,
+    })
+    .where(eq(paymentPlans.id, id))
+    .returning();
 
   return json({ message: "Payment Plan has been updated" }, HTTPStatusCodes.OK);
 };

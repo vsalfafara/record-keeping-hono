@@ -4,9 +4,9 @@ import {
   GetClientLotInvoicesRoute,
 } from "./invoices.routes";
 import { createDb } from "@/db";
-import { clientLots, invoices } from "@/db/schema";
+import { clientLots, interments, invoices, paymentPlans } from "@/db/schema";
 import { HTTPStatusCodes } from "@/lib/helpers";
-import { eq } from "drizzle-orm";
+import { count, eq, gt } from "drizzle-orm";
 
 export const getClientLotInvoices: AppRouteHandler<
   GetClientLotInvoicesRoute
@@ -53,6 +53,19 @@ export const createClientLotInvoice: AppRouteHandler<
   }
 
   await db.insert(invoices).values(body);
+
+  // if (body.purpose === "Interment") {
+  //   const rows = await db
+  //     .select({ count: count() })
+  //     .from(interments)
+  //     .where(eq(interments.clientLotId, id));
+
+  //   await db.insert(interments).values({
+  //     clientLotId: id,
+  //     dig: rows[0].count + 1,
+  //     lastModifiedAt,
+  //   });
+  // }
 
   await dbClient.end();
 

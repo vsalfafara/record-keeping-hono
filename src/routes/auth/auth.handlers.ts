@@ -12,13 +12,13 @@ export const login: AppRouteHandler<LoginRoute> = async ({
   req,
   env,
 }) => {
-  const { db, client } = createDb(env);
+  const { db, dbClient } = createDb(env);
   const body = req.valid("json");
   const userExists = await db.query.users.findFirst({
     where: eq(users.email, body.email),
   });
 
-  await client.end();
+  await dbClient.end();
 
   if (!userExists) {
     return json(
