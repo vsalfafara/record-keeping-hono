@@ -183,7 +183,7 @@ export const updatePaymentPlan: AppRouteHandler<
     .update(paymentPlans)
     .set({
       ...body,
-      paymentDue: paymentPlan.paymentDue,
+      paymentDue: Number(paymentPlan.paymentDue.toFixed(2)),
     })
     .where(eq(paymentPlans.id, id))
     .returning();
