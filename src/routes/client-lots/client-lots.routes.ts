@@ -65,5 +65,32 @@ export const getClientLot = createRoute({
   },
 });
 
+export const updateClientLot = createRoute({
+  tags,
+  middleware: auth,
+  path: "/client-lots/{id}",
+  method: "put",
+  request: {
+    params: IdParamsSchema,
+    body: jsonContentRequired(insertClientLotSchema, "Client lot to update"),
+    headers,
+  },
+  responses: {
+    [HTTPStatusCodes.OK]: jsonContent(
+      createMessageObjectSchema("Client lot updated"),
+      "Client lot updated"
+    ),
+    [HTTPStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
+      createErrorSchema(IdParamsSchema),
+      "Validation Error"
+    ),
+    [HTTPStatusCodes.NOT_FOUND]: jsonContent(
+      createMessageObjectSchema("Client lot does not exist"),
+      "Client lot does not exist"
+    ),
+  },
+});
+
 export type CreateClientLotRoute = typeof createClientLot;
 export type GetClientLotRoute = typeof getClientLot;
+export type UpdateClientLotRoute = typeof updateClientLot;

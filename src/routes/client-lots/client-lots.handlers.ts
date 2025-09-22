@@ -1,5 +1,9 @@
 import { AppRouteHandler } from "@/lib/types";
-import { CreateClientLotRoute, GetClientLotRoute } from "./client-lots.routes";
+import {
+  CreateClientLotRoute,
+  GetClientLotRoute,
+  UpdateClientLotRoute,
+} from "./client-lots.routes";
 import { createDb } from "@/db";
 import { clientLots } from "@/db/schema";
 import { HTTPStatusCodes } from "@/lib/helpers";
@@ -66,4 +70,37 @@ export const getClientLot: AppRouteHandler<GetClientLotRoute> = async ({
   }
 
   return json(clientLot, HTTPStatusCodes.OK);
+};
+
+export const updateClientLot: AppRouteHandler<UpdateClientLotRoute> = async ({
+  json,
+  req,
+  env,
+}) => {
+  const { id } = req.valid("param");
+  const body = req.valid("json");
+  const { db, dbClient } = createDb(env);
+
+  const [clientLot] = await db
+    .update(clientLots)
+    // @ts-ignore
+    .set(body)
+    .where(eq(clientLots.id, id))
+    .returning();
+
+  await dbClient.end();
+
+  if (!clientLot) {
+    return json(
+      { message: "Client lot does not exist" },
+      HTTPStatusCodes.NOT_FOUND
+    );
+  }
+
+  return json(
+    {
+      message: "Client Lot has been updated",
+    },
+    HTTPStatusCodes.OK
+  );
 };

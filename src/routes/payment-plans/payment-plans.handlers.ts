@@ -32,7 +32,7 @@ export const getClientLotPaymentPlan: AppRouteHandler<
     orderBy: [asc(paymentPlans.dueDate)],
   });
 
-  let paymentPlanRows;
+  let paymentPlanRows: any[] = [];
 
   if (paymentPlan.length) {
     const paymentPlanInvoices = await db.query.invoices.findMany({

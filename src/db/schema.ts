@@ -35,6 +35,13 @@ export const invoicePurposes = t.pgEnum("invoice_purpose", [
   "Reservation",
 ]);
 
+function timestamps() {
+  return {
+    createdBy: t.varchar("created_by").notNull(),
+    createdOn: t.date("created_on", { mode: "string" }).notNull(),
+  };
+}
+
 /**
  * Table
  */
